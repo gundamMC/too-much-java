@@ -24,5 +24,7 @@ class Submission(models.Model):
 
 class FileUpload(models.Model):
     file = models.FileField(upload_to='uploads/%Y/%m/%d/')
+    original_filename = models.CharField(max_length=128)
+    upload_date = models.DateTimeField(auto_now_add=True)
     submission = models.ForeignKey(Submission, on_delete=models.CASCADE)
 

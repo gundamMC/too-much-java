@@ -8,22 +8,30 @@ from .models import FileUpload, Submission
 from .serializers import FileUploadSerializer, SubmissionSerializer
 
 
-class FileUploadViewSet(viewsets.ModelViewSet):
+class FileUploadViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
 
     queryset = FileUpload.objects.all()
     serializer_class = FileUploadSerializer
 
-    parser_classes = (MultiPartParser, FormParser,)  # set parsers if not set in settings. Edited
+    parser_classes = (MultiPartParser, FormParser,)
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        serializer.save(original_filename = str(self.request.FILES['file']))
 
 
-class SubmissionViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+class SubmissionViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
 
     queryset = Submission.objects.all()
     serializer_class = SubmissionSerializer
 
-    # def get(self, request, *args, **kwargs):
-    #     pass
-        # return self.list(request, *args, **kwargs)
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
@@ -34,4 +42,12 @@ class SubmissionViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         submission = get_object_or_404(Submission, pk=pk)
         grade = submission.grade()
         submission.save()
-        return Response({'submissino_id':pk, 'grade': grade})
+        return Response({'submission_id': pk, 'grade': grade})
+
+    @action(methods=['get'], detail=True)
+    def files(self, request, pk=None):
+        submission = get_object_or_404(Submission, pk=pk)
+        return Response({
+            'submission_id': pk,
+            'files': FileUploadSerializer(submission.fileupload_set.all(), many=True).data
+            })
