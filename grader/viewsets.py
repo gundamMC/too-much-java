@@ -4,8 +4,8 @@ from rest_framework.decorators import action
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 
-from .models import FileUpload, Submission
-from .serializers import FileUploadSerializer, SubmissionSerializer
+from .models import FileUpload, Submission, Assignment, Unit, Course
+from .serializers import FileUploadSerializer, SubmissionSerializer, AssignmentSerializer, UnitSerializer, CourseSerializer
 
 
 class FileUploadViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
@@ -51,3 +51,18 @@ class SubmissionViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, viewsets
             'submission_id': pk,
             'files': FileUploadSerializer(submission.fileupload_set.all(), many=True).data
             })
+
+
+class AssignmentViewSet(viewsets.ModelViewSet):
+    queryset = Assignment.objects.all()
+    serializer_class = AssignmentSerializer
+
+
+class UnitViewSet(viewsets.ModelViewSet):
+    queryset = Unit.objects.all()
+    serializer_class = UnitSerializer
+
+
+class CourseViewSet(viewsets.ModelViewSet):
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer

@@ -12,12 +12,15 @@ from users.models import Student
 # Create your models here.
 
 
-class Class(models.Model):
+class Course(models.Model):
     name = models.CharField(max_length=64)
+    description = models.TextField(blank=True, null=True)
 
 
 class Unit(models.Model):
-    parent_class = models.ForeignKey(Class, on_delete=models.CASCADE)
+    name = models.CharField(max_length=64)
+    description = models.TextField(blank=True, null=True)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
 
 
 class Assignment(models.Model):
@@ -25,8 +28,10 @@ class Assignment(models.Model):
     description = models.TextField(blank=True, null=True)
 
     unit = models.ForeignKey(Unit, on_delete=models.SET_NULL, default=None, blank=True, null=True)
-    parent_class = models.ForeignKey(Class, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
     due_date = models.DateTimeField()
+
+    attempts = models.PositiveSmallIntegerField()
 
 
 class Submission(models.Model):
@@ -64,6 +69,7 @@ class Submission(models.Model):
             print('====== Compiling ======')
             print(output.decode())
 
+            # precompile controller?
             build_controller_cmd = r'javac -d {0} -cp {1};{2};{3} {4}'.format(build_path, build_path, junit_path, json_path, controller)
             p = subprocess.Popen(build_controller_cmd,
                                  stdout=subprocess.PIPE)
