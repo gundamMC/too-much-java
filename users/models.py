@@ -7,4 +7,5 @@ class Student(models.Model):
     student_id = models.PositiveIntegerField()  # maybe even PositiveSmallIntegerField [0, 32767]
     grade = models.PositiveSmallIntegerField()
 
-    courses = models.ManyToManyField('grader.Course')
+    def __str__(self):
+        return str(self.student_id)

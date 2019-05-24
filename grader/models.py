@@ -16,6 +16,8 @@ class Course(models.Model):
     name = models.CharField(max_length=64)
     description = models.TextField(blank=True, null=True)
 
+    students = models.ManyToManyField(Student)
+
 
 class Unit(models.Model):
     name = models.CharField(max_length=64)
