@@ -12,20 +12,11 @@
             <el-submenu index="2">
                 <template slot="title">
                     <i class="el-icon-location"></i>
-                    <span slot="title">Navigator One</span>
+                    <span slot="title">Courses</span>
                 </template>
-                <el-menu-item-group>
-                    <span slot="title">Group One</span>
-                    <el-menu-item index="2-1">item one</el-menu-item>
-                    <el-menu-item index="2-2">item two</el-menu-item>
-                </el-menu-item-group>
-                <el-menu-item-group title="Group Two">
-                    <el-menu-item index="2-3">item three</el-menu-item>
-                </el-menu-item-group>
-                <el-submenu index="2-4">
-                    <span slot="title">item four</span>
-                    <el-menu-item index="2-4-1">item one</el-menu-item>
-                </el-submenu>
+                <el-menu-item v-for="course in courses" :key="course.id" :index="courseIndex">
+                    {{course.name}}
+                </el-menu-item >
             </el-submenu>
             <el-menu-item index="3" disabled>
                 <i class="el-icon-document"></i>
@@ -40,13 +31,29 @@
 </template>
 
 <script>
+    import axios from 'axios';
+
+    let course_index = -1;
+
     export default {
         name: "SideBar",
+        computed: {
+            courseIndex: function() {
+                course_index++;
+                return `2-${course_index}`;
+            }
+        },
         data() {
             return {
-                isCollapse: true
+                isCollapse: true,
+                courses: []
             }
-        }
+        },
+      mounted () {
+        axios
+          .get('/api/course/')
+          .then(response => (this.courses = response.data))
+      }
     }
 </script>
 
