@@ -1,7 +1,8 @@
 import Vue from 'vue/dist/vue.js';
 import VueRouter from 'vue-router'
 import App from './App.vue'
-import testPage from './test_page.vue'
+import index from './pages/index'
+import testPage from './pages/test_page.vue'
 import 'element-ui/lib/theme-chalk/index.css';
 import ElementUI from 'element-ui';
 import locale from 'element-ui/lib/locale/lang/en'
@@ -14,8 +15,8 @@ Vue.use(VueCookies);
 const router = new VueRouter({
   mode: 'history',
   routes: [
-    {path: '/', component: App},
-    {path: '/test', component: testPage}
+    {path: '/', name: 'index', component: index},
+    {path: '/test', name: 'test', component: testPage}
   ] 
 });
 

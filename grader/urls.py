@@ -1,7 +1,6 @@
 from django.urls import path, include
 from django.views.generic import TemplateView
 from .router import router
-from grader.viewsets import FileUploadViewSet
 
 urlpatterns = [
     path(r'test_page', TemplateView.as_view(template_name="test_page.html"), name="test_page"),

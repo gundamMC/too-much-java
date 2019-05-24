@@ -1,10 +1,12 @@
 <template>
-  <div>
-    <SideBar/>
-    <router-link to="/test">hello!</router-link>
-    ====
-    <router-view></router-view>
-  </div>
+  <el-container>
+    <el-aside>
+      <SideBar/>
+    </el-aside>
+    <el-main>
+      <router-view></router-view>
+    </el-main>
+  </el-container>
 </template>
 
 <script>
