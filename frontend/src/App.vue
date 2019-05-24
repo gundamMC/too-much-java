@@ -1,5 +1,10 @@
 <template>
-  <SideBar/>
+  <div>
+    <SideBar/>
+    <router-link to="/test">hello!</router-link>
+    ====
+    <router-view></router-view>
+  </div>
 </template>
 
 <script>
@@ -12,7 +17,7 @@ export default {
   },
   data () {
     return {
-      isCollapse: true
+      // something: true
     }
   },
 }
