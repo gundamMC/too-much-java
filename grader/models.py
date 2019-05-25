@@ -18,11 +18,17 @@ class Course(models.Model):
 
     students = models.ManyToManyField(Student)
 
+    def __str__(self):
+        return str(self.name)
+
 
 class Unit(models.Model):
     name = models.CharField(max_length=64)
     description = models.TextField(blank=True, null=True)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='units')
+
+    def __str__(self):
+        return str(self.name)
 
 
 class Assignment(models.Model):
@@ -34,6 +40,9 @@ class Assignment(models.Model):
     due_date = models.DateTimeField()
 
     attempts = models.PositiveSmallIntegerField()
+
+    def __str__(self):
+        return str(self.name)
 
 
 class Submission(models.Model):

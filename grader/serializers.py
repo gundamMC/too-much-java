@@ -32,6 +32,8 @@ class UnitSerializer(serializers.ModelSerializer):
 
 
 class CourseSerializer(serializers.ModelSerializer):
+    units = UnitSerializer(many=True, read_only=True)
+
     class Meta:
         model = Course
         fields = '__all__'
