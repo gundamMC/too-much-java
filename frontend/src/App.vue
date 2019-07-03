@@ -1,9 +1,9 @@
 <template>
   <el-container>
     <el-header style="position: fixed; width: 100%;">
-      <SideBar/>
+      <NavMenu/>
     </el-header>
-    <el-main>
+    <el-main style="margin-top: 60px;">
       <router-view></router-view>
     </el-main>
   </el-container>
@@ -11,11 +11,11 @@
 
 <script>
 
-import SideBar from './components/SideBar.vue';
+import NavMenu from './components/NavMenu.vue';
 
 export default {
   components: {
-    SideBar
+    NavMenu
   },
   data () {
     return {

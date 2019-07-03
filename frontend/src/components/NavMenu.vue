@@ -41,7 +41,7 @@
     import logo from '../assets/logo.png';
 
     export default {
-        name: "SideBar",
+        name: "NavMenu",
         data() {
             return {
                 isCollapse: true,
