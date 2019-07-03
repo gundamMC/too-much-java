@@ -1,8 +1,8 @@
 <template>
   <el-container>
-    <el-aside>
+    <el-header style="position: fixed; width: 100%;">
       <SideBar/>
-    </el-aside>
+    </el-header>
     <el-main>
       <router-view></router-view>
     </el-main>

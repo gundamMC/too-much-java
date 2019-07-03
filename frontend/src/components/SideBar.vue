@@ -4,14 +4,13 @@
         <!--      <el-radio-button :label="false">expand</el-radio-button>-->
         <!--      <el-radio-button :label="true">collapse</el-radio-button>-->
         <!--    </el-radio-group>-->
-        <el-menu default-active="2" class="el-menu-vertical-demo" router="true">
-            <div class="logo">
+        <el-menu :default-active=$route.fullPath  mode="horizontal" router>
+            <el-menu-item index="/" class="logo">
                 <el-image
-                style="width: 80px; height: 80px;"
+                style="width: 40px; height: 40px; margin-bottom: 10%; margin-right: 10%"
                 :src="logo"/>
-                <h1>Too Much Java</h1>
-                <el-divider></el-divider>
-            </div>
+                <span>Too Much Java</span>
+            </el-menu-item>
             <el-menu-item index="/test">
                 <i class="el-icon-menu"></i>
                 <span slot="title">Dashboard</span>
@@ -59,13 +58,8 @@
 </script>
 
 <style scoped>
-    .el-menu-vertical-demo:not(.el-menu--collapse) {
-        width: 200px;
-        min-height: 400px;
-    }
-    .logo{
-        text-align: center;
-        width: 80%;
-        margin: 10% auto;
-    }
+.logo{
+  display:inline-block;
+  vertical-align:middle;
+}
 </style>
