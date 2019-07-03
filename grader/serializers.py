@@ -26,6 +26,8 @@ class AssignmentSerializer(serializers.ModelSerializer):
 
 
 class UnitSerializer(serializers.ModelSerializer):
+    assignments = AssignmentSerializer(many=True, read_only=True)
+
     class Meta:
         model = Unit
         fields = '__all__'

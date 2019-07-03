@@ -35,9 +35,9 @@ class Assignment(models.Model):
     name = models.CharField(max_length=64)
     description = models.TextField(blank=True, null=True)
 
-    unit = models.ForeignKey(Unit, on_delete=models.SET_NULL, default=None, blank=True, null=True)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    unit = models.ForeignKey(Unit, on_delete=models.SET_NULL, default=None, blank=True, null=True, related_name='assignments')
     due_date = models.DateTimeField()
+    date = models.DateTimeField()
 
     attempts = models.PositiveSmallIntegerField()
 
