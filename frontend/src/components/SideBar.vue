@@ -4,7 +4,7 @@
         <!--      <el-radio-button :label="false">expand</el-radio-button>-->
         <!--      <el-radio-button :label="true">collapse</el-radio-button>-->
         <!--    </el-radio-group>-->
-        <el-menu default-active="2" class="el-menu-vertical-demo">
+        <el-menu default-active="2" class="el-menu-vertical-demo" router="true">
             <div class="logo">
                 <el-image
                 style="width: 80px; height: 80px;"
@@ -12,16 +12,16 @@
                 <h1>Too Much Java</h1>
                 <el-divider></el-divider>
             </div>
-            <el-menu-item index="1">
+            <el-menu-item index="/test">
                 <i class="el-icon-menu"></i>
                 <span slot="title">Dashboard</span>
             </el-menu-item>
-            <el-submenu index="2">
+            <el-submenu index="/course">
                 <template slot="title">
                     <i class="el-icon-location"></i>
                     <span slot="title">Courses</span>
                 </template>
-                <el-menu-item v-for="course in courses" :key="course.id" :index="courseIndex">
+                <el-menu-item v-for="course in courses" :key="course.id" :index="'/course/' + course.id">
                     {{course.name}}
                 </el-menu-item >
             </el-submenu>
@@ -41,16 +41,8 @@
     import axios from 'axios';
     import logo from '../assets/logo.png';
 
-    let course_index = -1;
-
     export default {
         name: "SideBar",
-        computed: {
-            courseIndex: function() {
-                course_index++;
-                return `2-${course_index}`;
-            }
-        },
         data() {
             return {
                 isCollapse: true,
