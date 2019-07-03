@@ -5,6 +5,13 @@
         <!--      <el-radio-button :label="true">collapse</el-radio-button>-->
         <!--    </el-radio-group>-->
         <el-menu default-active="2" class="el-menu-vertical-demo">
+            <div class="logo">
+                <el-image
+                style="width: 80px; height: 80px;"
+                :src="logo"/>
+                <h1>Too Much Java</h1>
+                <el-divider></el-divider>
+            </div>
             <el-menu-item index="1">
                 <i class="el-icon-menu"></i>
                 <span slot="title">Dashboard</span>
@@ -32,6 +39,7 @@
 
 <script>
     import axios from 'axios';
+    import logo from '../assets/logo.png';
 
     let course_index = -1;
 
@@ -46,7 +54,8 @@
         data() {
             return {
                 isCollapse: true,
-                courses: []
+                courses: [],
+                logo: logo
             }
         },
       mounted () {
@@ -61,5 +70,10 @@
     .el-menu-vertical-demo:not(.el-menu--collapse) {
         width: 200px;
         min-height: 400px;
+    }
+    .logo{
+        text-align: center;
+        width: 80%;
+        margin: 10% auto;
     }
 </style>
