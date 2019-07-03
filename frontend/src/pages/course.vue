@@ -27,23 +27,43 @@
                 </div>
                 <div>
                     <el-row type="flex" align="middle">
-                        <el-col :span="4" :offset="2" style="margin-top: 25px;">
-                            <el-row style="height: 50px">Assignments</el-row>
-                            <el-row style="height: 50px">Quizzes</el-row>
-                            <el-row style="height: 50px">Notes</el-row>
-                        </el-col>
-                        <el-col :span="5">
-                            <el-row><el-progress type="circle" :percentage="25" width="50" status="text"></el-progress></el-row>
-                            <el-row><el-progress type="circle" :percentage="25" width="50" status="text"></el-progress></el-row>
-                            <el-row><el-progress type="circle" :percentage="25" width="50" status="text"></el-progress></el-row>
+                        <el-col :span="11" style="margin-top: 25px;">
+                            <el-button style="width: 100%; margin-left: 0">
+                                <el-row type="flex" align="middle" justify="center">
+                                    Assignments
+                                    <el-progress type="circle" :percentage="25" :width="50" status="text" style="margin-left: 15%"></el-progress>
+                                </el-row>
+                            </el-button>
+
+                            <el-button style="width: 100%; margin-left: 0">
+                                <el-row type="flex" align="middle" justify="center">
+                                    Assignments
+                                    <el-progress type="circle" :percentage="25" :width="50" status="text" style="margin-left: 15%"></el-progress>
+                                </el-row>
+                            </el-button>
+
+                            <el-button style="width: 100%; margin-left: 0">
+                                <el-row type="flex" align="middle" justify="center">
+                                    Assignments
+                                    <el-progress type="circle" :percentage="25" :width="50" status="text" style="margin-left: 15%"></el-progress>
+                                </el-row>
+                            </el-button>
+
                         </el-col>
                         <el-col :span="2">
                             <el-divider direction="vertical"></el-divider>
                         </el-col>
                         <el-col :span="11">
-                            <el-row>Assignments</el-row>
-                            <el-row>Quizzes</el-row>
-                            <el-row>Notes</el-row>
+                            <div style="text-align: left; margin-bottom: 10px;">
+                                <h3>Latest Assignments</h3>
+                            </div>
+
+
+                            <el-table :data="unit.latest" :row-style=bg_style :header-cell-style=bg_style>
+                                <el-table-column prop="name" label="Name"/>
+                                <el-table-column prop="type" label="Type"/>
+                                <el-table-column prop="due_date" label="Due"/>
+                            </el-table>
                         </el-col>
                     </el-row>
                 </div>
@@ -64,22 +84,43 @@
         },
         data() {
             return {
-                course: {}
+                course: {},
+                bg_style: {
+                    backgroundColor: "#fafafa"
+                }
             }
         },
-        mounted() {
+        created() {
             axios
                 .get(`/api/course/${this.$route.params.id}/`)
-                .then(response => (this.course = response.data))
+                .then(response => {
+
+                    this.course = response.data;
+
+                    for (let i = 0; i < response.data.units.length; i++) {
+                        axios.get(`/api/unit/${response.data.units[i].id}/latest/`)
+                            .then(unit_response => {
+                                this.$set(this.course.units[i], 'latest', unit_response.data.assignments);
+                            })
+                    }
+
+
+                });
+
         }
     }
 </script>
 
 <style>
-  .el-row {
-    margin-bottom: 20px;
-  }
+    .el-button {
+        width: 100%;
+        marigin-left: 0;
+        border: 0;
+        background-color: #fafafa;
+    }
+
     .el-divider--vertical {
         height: 150px;
     }
+
 </style>
