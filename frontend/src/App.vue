@@ -1,11 +1,11 @@
 <template>
   <el-container>
-    <el-header style="position: fixed; width: 100%;">
-      <NavMenu/>
-    </el-header>
     <el-main style="margin-top: 60px;">
       <router-view></router-view>
     </el-main>
+    <el-header style="position: fixed; width: 100%; top: 0;">
+      <NavMenu/>
+    </el-header>
   </el-container>
 </template>
 

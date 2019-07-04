@@ -67,7 +67,7 @@ class UnitViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=True)
     def latest(self, request, pk=None):
         unit = get_object_or_404(Unit, pk=pk)
-        assignments = unit.assignment_set.filter(due_date__gt=date.today()).order_by('due_date')[:3]
+        assignments = unit.assignments.filter(due_date__gt=date.today()).order_by('due_date')[:3]
         return Response({
             'unit_id': pk,
             'assignments': AssignmentSerializer(assignments, many=True).data

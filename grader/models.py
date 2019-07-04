@@ -39,10 +39,28 @@ class Assignment(models.Model):
     due_date = models.DateTimeField()
     date = models.DateTimeField()
 
-    attempts = models.PositiveSmallIntegerField()
+    attempts = models.PositiveSmallIntegerField(default=0)  # 0 = no limit on attempts
 
     def __str__(self):
         return str(self.name)
+
+
+def starting_file_name(instance, filename):
+    return '/'.join(['assignment_templates',
+                     str(instance.id),
+                     filename
+                     ])
+
+
+class CodeFileAssignment(Assignment):
+    code_template = models.FileField(upload_to=starting_file_name, null=True)
+    instructions = models.TextField(blank=True, null=True)
+    public_test_cases = models.TextField(blank=True, null=True)  # JSON list since we can't store lists directly
+    private_test_cases = models.TextField(blank=True, null=True)  # JSON
+
+
+class QuizAssignment(Assignment):
+    questions = models.TextField(blank=True, null=True)  # JSON
 
 
 class Submission(models.Model):
