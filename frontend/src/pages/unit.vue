@@ -94,18 +94,7 @@
     }
 </script>
 
-<style>
-    .el-button {
-        width: 100%;
-        marigin-left: 0;
-        border: 0;
-        background-color: #fafafa;
-    }
-
-    .el-divider--vertical {
-        height: 150px;
-    }
-
+<style scoped>
     .small-font {
         font-size: 13px;
         color: #999;

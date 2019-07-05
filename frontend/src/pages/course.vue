@@ -124,7 +124,7 @@
     }
 </script>
 
-<style>
+<style scoped>
     .el-button {
         width: 100%;
         marigin-left: 0;
