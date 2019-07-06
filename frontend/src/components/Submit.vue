@@ -29,8 +29,6 @@
 
 <script>
 
-    import axios from 'axios';
-
     export default {
         props: {
             assignment: Object,
@@ -47,15 +45,13 @@
             submitUpload() {
 
                 // create submission first
-                axios
-                    .post(`/api/submission/`, {'assignment': this.assignment.id, 'student': this.student_id})
+                this.$api
+                    .post(`submission/`, {'assignment': this.assignment.id, 'student': this.student_id})
                     .then(response => {
 
                         this.submission = response.data;
 
                         this.sub_id = response.data.id;
-
-                        console.log(response.data);
 
                         this.$nextTick(
                             () => (this.$refs.upload.submit())

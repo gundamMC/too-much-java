@@ -86,7 +86,6 @@
 </template>
 
 <script>
-    import axios from 'axios';
     import collapseCard from '../components/collapseCard.vue';
     import sideBar from '../components/SideBar';
 
@@ -104,14 +103,14 @@
             }
         },
         created() {
-            axios
-                .get(`/api/course/${this.$route.params.id}/`)
+            this.$api
+                .get(`course/${this.$route.params.id}/`)
                 .then(response => {
 
                     this.course = response.data;
 
                     for (let i = 0; i < response.data.units.length; i++) {
-                        axios.get(`/api/unit/${response.data.units[i].id}/latest/`)
+                        this.$api.get(`/api/unit/${response.data.units[i].id}/latest/`)
                             .then(unit_response => {
                                 this.$set(this.course.units[i], 'latest', unit_response.data.assignments);
                             })

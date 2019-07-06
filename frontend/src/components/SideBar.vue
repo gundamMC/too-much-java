@@ -23,7 +23,6 @@
 </template>
 
 <script>
-    import axios from 'axios';
 
     export default {
         props: {
@@ -37,8 +36,8 @@
             }
         },
         created() {
-            axios
-                .get(`/api/course/${this.course_id}/`)
+            this.$api
+                .get(`course/${this.course_id}/`)
                 .then(response => (this.course = response.data));
         }
     }

@@ -61,7 +61,6 @@
 </template>
 
 <script>
-    import axios from 'axios';
     import moment from 'moment';
     import sideBar from '../components/SideBar';
 
@@ -78,8 +77,8 @@
             }
         },
         created() {
-            axios
-                .get(`/api/unit/${this.$route.params.unit_id}/`)
+            this.$api
+                .get(`unit/${this.$route.params.unit_id}/`)
                 .then(response => {
 
                     for (let i = 0; i < response.data.assignments.length; i++) {

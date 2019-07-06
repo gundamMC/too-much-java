@@ -120,7 +120,6 @@
 </template>
 
 <script>
-    import axios from 'axios';
     import submit from '../../components/Submit';
 
     export default {
@@ -133,8 +132,8 @@
             }
         },
         created() {
-            axios
-                .get(`/api/assignment/${this.$route.params.id}/`)
+            this.$api
+                .get(`assignment/${this.$route.params.id}/`)
                 .then(response => {
 
                     this.assignment = response.data;

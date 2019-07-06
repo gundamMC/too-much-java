@@ -37,7 +37,6 @@
 </template>
 
 <script>
-    import axios from 'axios';
     import logo from '../assets/logo.png';
 
     export default {
@@ -50,8 +49,8 @@
             }
         },
       mounted () {
-        axios
-          .get('/api/course/')
+        this.$api
+          .get('course/')
           .then(response => (this.courses = response.data))
       }
     }
