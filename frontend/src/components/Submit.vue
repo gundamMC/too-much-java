@@ -1,51 +1,73 @@
 <template>
     <div>
-        <h1>Submit your .java file below for submission {{submission.id}} : </h1>
-
-        <el-button style="margin: 10px;" size="small" type="success" @click="submitUpload">Confirm upload</el-button>
-
         <el-upload class="upload"
                    ref="upload"
                    drag
                    action="/api/upload/"
-                   :data="{submission: submission.id}"
+                   :data="{submission: sub_id}"
                    :multiple="true"
                    :headers="{ 'X-CSRFToken': csrf}"
                    :auto-upload="false"
-                   :on-remove="(file, f_list) => {t_file=file; fileList=f_list;}">
+                    style="width: 360px"
+        >
             <i class="el-icon-upload"></i>
             <div class="el-upload__text">Drop file here or <em>click to upload</em></div>
             <div slot="tip" class="el-upload__tip">.java files with a size less than 1.0 mb</div>
         </el-upload>
 
-        {{t_file}}  <!-- if status == success -> file is already sent, ready -> not sent yet
+        <el-row style="margin-top: 20px">
+            <el-button type="primary" @click="submitUpload">Confirm upload</el-button>
 
-        { "status": "success", "name": "AP_Chemistry.pdf", "size": 113494, "percentage": 100, "uid": 1554083008629, "raw": { "uid": 1554083008629 }, "response": { "id": 3, "file": "http://localhost:8000/api/upload/uploads/2019/03/31/AP_Chemistry_atCkHoH.pdf", "submission": 4 } }
+            <el-button type="info" @click="clearFiles">Clear files</el-button>
+        </el-row>
 
-        -->
 
-        ------------------
 
-        {{fileList}}
 
     </div>
 </template>
 
 <script>
+
+    import axios from 'axios';
+
     export default {
         props: {
-            submission: Object
+            assignment: Object,
+            student_id: Number
         },
         data() {
             return {
                 csrf: this.$cookies.get('csrftoken'),
-                t_file: null,
-                fileList: null
+                submission: {},
+                sub_id: null
             }
         },
         methods: {
             submitUpload() {
-                this.$refs.upload.submit();
+
+                // create submission first
+                axios
+                    .post(`/api/submission/`, {'assignment': this.assignment.id, 'student': this.student_id})
+                    .then(response => {
+
+                        this.submission = response.data;
+
+                        this.sub_id = response.data.id;
+
+                        console.log(response.data);
+
+                        this.$nextTick(
+                            () => (this.$refs.upload.submit())
+                        );
+
+                    });
+
+
+            },
+
+            clearFiles() {
+                this.$refs.upload.clearFiles();
             }
         }
     }

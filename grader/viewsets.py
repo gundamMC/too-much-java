@@ -1,7 +1,7 @@
 from datetime import date
 
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, mixins, generics
+from rest_framework import viewsets, mixins, generics, status
 from rest_framework.decorators import action
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
@@ -24,10 +24,10 @@ class FileUploadViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, viewsets
         return self.create(request, *args, **kwargs)
 
     def perform_create(self, serializer):
-        serializer.save(original_filename = str(self.request.FILES['file']))
+        serializer.save(original_filename=str(self.request.FILES['file']))
 
 
-class SubmissionViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
+class SubmissionViewSet(viewsets.ModelViewSet):
 
     queryset = Submission.objects.all()
     serializer_class = SubmissionSerializer
@@ -35,8 +35,23 @@ class SubmissionViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, viewsets
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        submission = serializer.save()
+        submission.total_points = submission.assignment.points
+        submission.save()
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    @action(methods=['post'], detail=False)
+    def test(self, request):
+
+        print('test')
+        print(request.data)
+
+        return Response()
 
     @action(methods=['get'], detail=True)
     def grade(self, request, pk=None):

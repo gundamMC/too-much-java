@@ -1,6 +1,6 @@
 <template>
 
-    <el-card>
+    <el-card style="padding: 20px; margin: 0 20px;">
         <el-row>
             <h1>Practice Programming Assignment: Python Basics with numpy (optional)</h1>
         </el-row>
@@ -46,31 +46,72 @@
 
                 <el-tab-pane label="Files">
                     <el-row>
-                        Download the project related files here.
+                        <el-col :span="18">
+
+                            <p>Download the project related files here.</p>
+
+                            <el-row type="flex">
+                                <i class="el-icon-files" style="font-size: 60px"></i>
+                                <div style="margin-left: 20px">
+                                    <h2>test_file.zip</h2>
+                                    10.2 mb
+                                </div>
+
+                                <el-button type="primary" style="margin-left: 100px; width: 250px">Download</el-button>
+
+                            </el-row>
+
+                        </el-col>
+                        <el-col :span="6">
+                            <div class="instruction_sidebar">
+                                <h1>Multiple Files</h1>
+                                <p>
+                                Due to current limitations, only one file is allowed per assignment.
+                            For assignments with multiple files, please zip them into a single file.
+                                </p>
+                            </div>
+                        </el-col>
                     </el-row>
+                </el-tab-pane>
 
-                    <el-row type="flex">
-                        <i class="el-icon-files" style="font-size: 60px"></i>
-                        <div style="margin-left: 20px">
-                            <h2>test_file.zip</h2>
-                            10.2 mb
-                        </div>
+                <el-tab-pane label="My Submissions">
 
-                        <el-button type="primary" style="margin-left: 100px; width: 250px">Download</el-button>
+                    <el-row>
 
+                        <el-col :span="18">
+
+                            <h1>Upload a new submission</h1>
+                            <submit :assignment="assignment" :student_id="1"></submit>
+
+                        </el-col>
+
+                        <el-col :span="6">
+                            <div class="instruction_sidebar">
+                                <h1>Multiple Files</h1>
+                                <p>
+                                    To upload multiple files at once, simple drag them to the drop-off area
+                                    at once or select all of them (either at once or one by one) in the
+                                    file selection window.
+                                </p>
+                            </div>
+                        </el-col>
                     </el-row>
 
                     <el-divider></el-divider>
 
                     <el-row>
-                        <small>
-                            Due to current limitations, only one file is allowed per assignment.
-                            For assignments with multiple files, please zip them into a single file.
-                        </small>
-                    </el-row>
-                </el-tab-pane>
+                        <h2>Submissions</h2>
 
-                <el-tab-pane label="My Submissions">My Submissions</el-tab-pane>
+                        <el-collapse>
+                            <el-collapse-item title="Consistency" name="1">
+                                <div>Consistent with real life: in line with the process and logic of real life, and comply with languages and habits that the users are used to;</div>
+                                <div>Consistent within interface: all elements should be consistent, such as: design style, icons and texts, position of elements, etc.</div>
+                            </el-collapse-item>
+
+                        </el-collapse>
+                    </el-row>
+
+                </el-tab-pane>
             </el-tabs>
         </el-row>
 
@@ -79,8 +120,27 @@
 </template>
 
 <script>
+    import axios from 'axios';
+    import submit from '../../components/Submit';
+
     export default {
-        name: "assignment"
+        components: {
+            submit
+        },
+        data() {
+            return {
+                assignment: {}
+            }
+        },
+        created() {
+            axios
+                .get(`/api/assignment/${this.$route.params.id}/`)
+                .then(response => {
+
+                    this.assignment = response.data;
+
+                });
+        }
     }
 </script>
 

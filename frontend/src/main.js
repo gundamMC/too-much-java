@@ -14,6 +14,11 @@ import coursePage from './pages/course';
 import unitPage from './pages/unit';
 import assignmentPage from './pages/assignment';
 
+// set up axios
+import axios from 'axios';
+axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+axios.defaults.xsrfCookieName = "csrftoken";
+
 Vue.use(VueRouter);
 Vue.use(VueCookies);
 

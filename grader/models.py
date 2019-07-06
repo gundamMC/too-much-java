@@ -39,6 +39,8 @@ class Assignment(models.Model):
     due_date = models.DateTimeField()
     date = models.DateTimeField()
 
+    points = models.PositiveSmallIntegerField()
+
     attempts = models.PositiveSmallIntegerField(default=0)  # 0 = no limit on attempts
 
     def __str__(self):
@@ -64,10 +66,10 @@ class QuizAssignment(Assignment):
 
 
 class Submission(models.Model):
-    total_points = models.IntegerField(default=None, blank=True, null=True)
-    points = models.IntegerField(default=None, blank=True, null=True)
+    total_points = models.PositiveSmallIntegerField(default=None, blank=True, null=True)
+    points = models.PositiveSmallIntegerField(default=None, blank=True, null=True)
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
-    submitted_date = models.DateTimeField()
+    submitted_date = models.DateTimeField(auto_now_add=True)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
 
     def grade(self):
@@ -126,11 +128,11 @@ class Submission(models.Model):
 def content_file_name(instance, filename):
     now = datetime.datetime.now()
     return '/'.join(['uploads',
-                     instance.submission.student.student_id,
-                     now.year,
-                     now.month,
-                     now.day,
-                     instance.submission.id,
+                     str(instance.submission.student.student_id),
+                     str(now.year),
+                     str(now.month),
+                     str(now.day),
+                     str(instance.submission.id),
                      filename
                      ])
 
@@ -139,4 +141,4 @@ class FileUpload(models.Model):
     file = models.FileField(upload_to=content_file_name)
     original_filename = models.CharField(max_length=128)
     upload_date = models.DateTimeField(auto_now_add=True)
-    submission = models.ForeignKey(Submission, on_delete=models.CASCADE)
+    submission = models.ForeignKey(Submission, on_delete=models.CASCADE, related_name='files')

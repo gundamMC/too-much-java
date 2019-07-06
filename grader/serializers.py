@@ -12,10 +12,12 @@ class FileUploadSerializer(serializers.ModelSerializer):
 
 
 class SubmissionSerializer(serializers.ModelSerializer):
+    files = FileUploadSerializer(many=True, read_only=True)
 
     class Meta:
         model = Submission
         fields = '__all__'
+        read_only_fields = ('total_points', 'points', 'submitted_date')
 
 
 class AssignmentSerializer(serializers.ModelSerializer):
