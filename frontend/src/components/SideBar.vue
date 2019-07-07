@@ -14,7 +14,7 @@
                     <!--                    <i class="el-icon-location"></i>-->
                     <span slot="title">Units</span>
                 </template>
-                <el-menu-item v-for="unit in course.units" :key="unit.id" :index="'/course/' + course_id + '/unit/' + unit.id">
+                <el-menu-item v-for="unit in course.units" :key="unit.id" :index="'/course/' + course_id + '/unit/' + unit.id + '/'">
                     {{unit.name}}
                 </el-menu-item>
             </el-submenu>
@@ -31,14 +31,18 @@
         data() {
             return {
                 isCollapse: true,
-                course: {},
                 c_id: this.course_id.toString()  // course_id
             }
         },
-        created() {
-            this.$api
-                .get(`course/${this.course_id}/`)
-                .then(response => (this.course = response.data));
+        computed: {
+            course() {
+                if (this.$store.getters.courseLoaded){
+                    return this.$store.getters.course(this.$route.params.id);
+                }
+                else{
+                    return {};
+                }
+            }
         }
     }
 

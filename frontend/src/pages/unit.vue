@@ -39,6 +39,7 @@
                         <el-timeline style="text-align: left; margin: 0 20%">
                             <el-timeline-item :key="assignment.id" :timestamp="assignment.date" placement="top"
                                               v-for="assignment in unit.assignments">
+                                <router-link :to="'assignment/' + assignment.id + '/'">
                                 <el-card shadow="hover">
                                     <div slot="header">
                                         <i class="el-icon-document" v-if="assignment.type === 'code'"></i>
@@ -49,6 +50,7 @@
                                     <p>{{assignment.description}}</p>
                                     <p class="small-font">Due: {{assignment.due_date}}</p>
                                 </el-card>
+                                    </router-link>
                             </el-timeline-item>
                         </el-timeline>
                     </div>
@@ -70,26 +72,22 @@
         },
         data() {
             return {
-                unit: {},
                 bg_style: {
                     backgroundColor: "#fafafa"
                 }
             }
         },
-        created() {
-            this.$api
-                .get(`unit/${this.$route.params.unit_id}/`)
-                .then(response => {
-
-                    for (let i = 0; i < response.data.assignments.length; i++) {
-                        response.data.assignments[i].date = moment(response.data.assignments[i].date).format('dddd MMMM Do, YYYY');
-                        response.data.assignments[i].due_date = moment(response.data.assignments[i].due_date).format('dddd MMMM Do, YYYY [at] h:mm:ss a');
-                    }
-
-                    this.unit = response.data;
-
-                });
+        computed: {
+            unit() {
+                if (this.$store.getters.courseLoaded){
+                    return this.$store.getters.unit(this.$route.params.id, this.$route.params.unit_id);
+                }
+                else{
+                    return {};
+                }
+            }
         }
+
     }
 </script>
 

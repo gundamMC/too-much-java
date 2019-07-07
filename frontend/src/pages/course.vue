@@ -96,28 +96,29 @@
         },
         data() {
             return {
-                course: {},
                 bg_style: {
                     backgroundColor: "#fafafa"
                 }
             }
         },
+        computed: {
+            course() {
+                if (this.$store.getters.courseLoaded){
+                    return this.$store.getters.course(this.$route.params.id);
+                }
+                else{
+                    return {};
+                }
+            }
+        },
         created() {
-            this.$api
-                .get(`course/${this.$route.params.id}/`)
-                .then(response => {
 
-                    this.course = response.data;
-
-                    for (let i = 0; i < response.data.units.length; i++) {
-                        this.$api.get(`/api/unit/${response.data.units[i].id}/latest/`)
-                            .then(unit_response => {
-                                this.$set(this.course.units[i], 'latest', unit_response.data.assignments);
-                            })
-                    }
-
-
-                });
+            // for (let i = 0; i < this.course.units.length; i++) {
+            //     this.$api.get(`/api/unit/${this.course.units[i].id}/latest/`)
+            //         .then(unit_response => {
+            //             this.$set(this.course.units[i], 'latest', unit_response.data.assignments);
+            //         })
+            // }
 
         }
     }

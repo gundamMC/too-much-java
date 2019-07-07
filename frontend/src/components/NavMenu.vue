@@ -11,16 +11,16 @@
                 :src="logo"/>
                 <span>Too Much Java</span>
             </el-menu-item>
-            <el-menu-item index="/test">
+            <el-menu-item index="/test/">
                 <i class="el-icon-menu"></i>
                 <span slot="title">Dashboard</span>
             </el-menu-item>
-            <el-submenu index="/course">
+            <el-submenu index="/course/">
                 <template slot="title">
                     <i class="el-icon-location"></i>
                     <span slot="title">Courses</span>
                 </template>
-                <el-menu-item v-for="course in courses" :key="course.id" :index="'/course/' + course.id">
+                <el-menu-item v-for="course in courses" :key="course.id" :index="'/course/' + course.id + '/'">
                     {{course.name}}
                 </el-menu-item >
             </el-submenu>
@@ -29,17 +29,17 @@
                 <span slot="title">Navigator Three</span>
             </el-menu-item>
 
-            <el-menu-item v-if="!loggedIn" index="/register" class="dock-right">
+            <el-menu-item v-if="!loggedIn" index="/register/" class="dock-right">
                 <span slot="title">Register</span>
             </el-menu-item>
-            <el-menu-item v-if="!loggedIn" index="/login" class="dock-right">
+            <el-menu-item v-if="!loggedIn" index="/login/" class="dock-right">
                 <i class="el-icon-user"></i>
                 <span slot="title">Login</span>
             </el-menu-item>
 
 
 
-            <el-menu-item v-if="loggedIn" index="/profile" class="dock-right">
+            <el-menu-item v-if="loggedIn" index="/profile/" class="dock-right">
                 <i class="el-icon-user"></i>
                 <span slot="title">gundamMC</span>
             </el-menu-item>

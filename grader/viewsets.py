@@ -66,7 +66,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
         submission = get_object_or_404(Submission, pk=pk)
         return Response({
             'submission_id': pk,
-            'files': FileUploadSerializer(submission.fileupload_set.all(), many=True).data
+            'files': FileUploadSerializer(submission.files.all(), many=True).data
             })
 
 
@@ -78,15 +78,6 @@ class AssignmentViewSet(viewsets.ModelViewSet):
 class UnitViewSet(viewsets.ModelViewSet):
     queryset = Unit.objects.all()
     serializer_class = UnitSerializer
-
-    @action(methods=['get'], detail=True)
-    def latest(self, request, pk=None):
-        unit = get_object_or_404(Unit, pk=pk)
-        assignments = unit.assignments.filter(due_date__gt=date.today()).order_by('due_date')[:3]
-        return Response({
-            'unit_id': pk,
-            'assignments': AssignmentSerializer(assignments, many=True).data
-        })
 
 
 class CourseViewSet(viewsets.ModelViewSet):

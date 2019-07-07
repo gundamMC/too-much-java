@@ -1,3 +1,5 @@
+from datetime import date
+
 from rest_framework import serializers
 from .models import FileUpload, Submission, Assignment, CodeFileAssignment, QuizAssignment, Unit, Course
 
@@ -44,6 +46,13 @@ class UnitSerializer(serializers.ModelSerializer):
         return AssignmentSerializer(ordered_queryset, many=True, context=self.context).data
 
     assignments = serializers.SerializerMethodField()
+
+    def get_latest(self, obj):
+        assignments = obj.assignments.filter(due_date__gt=date.today()).order_by('due_date')[:3]
+        assignment_ids = [x.id for x in assignments]
+        return assignment_ids
+
+    latest = serializers.SerializerMethodField()
 
     class Meta:
         model = Unit
