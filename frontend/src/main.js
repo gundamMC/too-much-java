@@ -1,5 +1,4 @@
-import Vue from 'vue/dist/vue.js';
-import VueRouter from 'vue-router'
+import Vue from 'vue';
 import 'element-ui/lib/theme-chalk/index.css';
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/reset.css';
@@ -7,45 +6,40 @@ import locale from 'element-ui/lib/locale/lang/en';
 
 import VueCookies from 'vue-cookies';
 
-import App from './App.vue';
-import index from './pages/index';
-import testPage from './pages/test_page';
-import coursePage from './pages/course';
-import unitPage from './pages/unit';
-import assignmentPage from './pages/assignment';
+// router
+import router from './router';
+// vuex store
+import store from './store'
 
-// set up axios
-import axios from 'axios';
-axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
-axios.defaults.xsrfCookieName = "csrftoken";
+import App from './App.vue';
+
+import axios from "axios";
+import $axios from './axios-instance';
+
+axios.defaults.headers.common['Authorization'] =
+                                'jwt ' + store.getters.token;
+
 
 Vue.use({
     install (Vue) {
-    Vue.prototype.$api = axios.create({
-      baseURL: 'http://localhost:8000/api/'
-    })
+    Vue.prototype.$api = $axios
   }
-})
+});
 
-Vue.use(VueRouter);
 Vue.use(VueCookies);
 
-const router = new VueRouter({
-  mode: 'history',
-  routes: [
-    {path: '/', name: 'index', component: index},
-    {path: '/test', name: 'test', component: testPage},
-    {path: '/course/:id', name: 'course', component: coursePage},
-    {path: '/course/:id/unit/:unit_id', name: 'unit', component: unitPage},
-    {path: '/course/:id/unit/:unit_id/assignment/:assignment_id', name: 'assignment', component: assignmentPage}
-  ] 
-});
+
 
 // Vue.config.productionTip = false
 
 Vue.use(ElementUI, { locale });
 
-new Vue({
-  router,
-  render: h => h(App)
-}).$mount('#app')
+const vm = new Vue({
+    router,
+    store,
+    render: h => h(App)
+});
+
+vm.$mount('#app');
+
+export default vm;
