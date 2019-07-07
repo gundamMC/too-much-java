@@ -52,39 +52,57 @@ const actions = {
             })
             .finally(() => (context.commit('finishLoading')))
     },
-    refreshToken() {
+    refreshToken(context) {
         const payload = {
             token: state.jwt
-        }
+        };
         $axios.post(state.endpoints.refreshJWT, payload)
             .then((response) => {
-                this.commit('updateToken', response.data.token)
+                context.commit('updateToken', response.data.token)
             })
             .catch((error) => {
-                console.log(error)
+                if (error.response.status === 400){
+                    // for some reason the token did not work, log out
+                    context.commit('removeToken');
+                }
             })
     },
-    inspectToken(){
-      const token = state.jwt;
-      if(token){
-        const decoded = jwt_decode(token);
-        const exp = decoded.exp;
-        const orig_iat = decoded.orig_iat;
-        if(exp - (Date.now()/1000) < 1800 && (Date.now()/1000) - orig_iat < 628200){
-            // Token within lifespan, simply refresh
-          this.dispatch('refreshToken')
-        } else if (exp -(Date.now()/1000) < 1800){
-          // DO NOTHING, DO NOT REFRESH
-        } else {
-          // PROMPT USER TO RE-LOGIN, THIS ELSE CLAUSE COVERS THE CONDITION WHERE A TOKEN IS EXPIRED AS WELL
-        }
-      }
+    inspectToken(context) {
+
+        return new Promise((resolve) => {
+            const token = context.getters.token;
+            if (token) {
+                const decoded = jwt_decode(token);
+                const exp = decoded.exp;
+                const orig_iat = decoded.orig_iat;
+
+                if ((Date.now()/1000) > exp) {
+                    // token expired
+                    console.log('re login');
+                    context.commit('removeToken');
+                } else if ((Date.now()/1000) > exp - 1800 && (Date.now()/1000) < orig_iat + 604800) {
+                    // 1800 = 30 minutes
+                    // 604800 = 7 days
+                    // expires within 30 minutes and token is still within lifespan
+
+                    console.log('refresh');
+                    context.dispatch('refreshToken');
+                }
+            }
+
+            resolve();
+        });
+
+
     }
 };
 
 const getters = {
     token () {
         return state.jwt;
+    },
+    loggedIn () {
+        return !(state.jwt === undefined || state.jwt === null);
     }
 };
 
