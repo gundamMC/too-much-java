@@ -1,6 +1,8 @@
 import $axios from '../../axios-instance';
 import jwt_decode from 'jwt-decode';
 import router from '../../router';
+import axios from "axios";
+import store from "../index";
 
 const state = {
     jwt: localStorage.getItem('token'),
@@ -15,6 +17,9 @@ const mutations = {
     updateToken(state, newToken){
         localStorage.setItem('token', newToken);
         state.jwt = newToken;
+
+        axios.defaults.headers.common['Authorization'] =
+                                'jwt ' + store.getters.token;
     },
     removeToken(state){
         localStorage.removeItem('token');
@@ -38,6 +43,7 @@ const actions = {
         $axios.post(context.state.endpoints.obtainJWT, payload)
             .then((response) => {
                 context.commit('updateToken', response.data.token);
+                context.dispatch('getCourses');
                 router.push('/');
             })
             .catch((error) => {
@@ -58,7 +64,8 @@ const actions = {
         };
         $axios.post(state.endpoints.refreshJWT, payload)
             .then((response) => {
-                context.commit('updateToken', response.data.token)
+                context.commit('updateToken', response.data.token);
+                context.dispatch('getCourses');
             })
             .catch((error) => {
                 if (error.response.status === 400){
@@ -84,9 +91,11 @@ const actions = {
                     // 1800 = 30 minutes
                     // 604800 = 7 days
                     // expires within 30 minutes and token is still within lifespan
-
                     console.log('refresh');
                     context.dispatch('refreshToken');
+                } else {
+                    // everything is normal, proceed to get course list
+                    context.dispatch('getCourses');
                 }
             }
 

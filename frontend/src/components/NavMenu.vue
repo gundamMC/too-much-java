@@ -56,7 +56,6 @@
         data() {
             return {
                 isCollapse: true,
-                courses: [],
                 logo: logo,
             }
         },
@@ -64,18 +63,14 @@
         computed: {
             loggedIn() {
                 return this.$store.getters.loggedIn;
+            },
+            courses() {
+                return this.$store.getters.courses;
             }
         },
 
         created() {
-            this.$store.dispatch('inspectToken').then(
-                () => {
-                    if (this.$store.getters.loggedIn) {
-                        this.$api
-                            .get('course/')
-                            .then(response => (this.courses = response.data));
-                    }
-                });
+            this.$store.dispatch('inspectToken');
 
       }
     }
