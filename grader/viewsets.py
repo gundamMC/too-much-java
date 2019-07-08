@@ -1,7 +1,5 @@
-from datetime import date
-
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, mixins, generics, status
+from rest_framework import viewsets, mixins, status
 from rest_framework.decorators import action
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
@@ -10,15 +8,16 @@ from .models import FileUpload, Submission, Assignment, Unit, Course
 from .serializers import FileUploadSerializer, SubmissionSerializer, AssignmentSerializer, UnitSerializer, CourseSerializer
 
 
-class FileUploadViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
+class FileUploadViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
     queryset = FileUpload.objects.all()
     serializer_class = FileUploadSerializer
 
     parser_classes = (MultiPartParser, FormParser,)
 
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
+    # disabling get file upload directly
+    # def get(self, request, *args, **kwargs):
+    #     return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
@@ -32,8 +31,9 @@ class SubmissionViewSet(viewsets.ModelViewSet):
     queryset = Submission.objects.all()
     serializer_class = SubmissionSerializer
 
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
+    # set query set to the student's own submissions only
+    def get_queryset(self):
+        return self.request.user.student.submissions.all()
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -70,16 +70,21 @@ class SubmissionViewSet(viewsets.ModelViewSet):
             })
 
 
-class AssignmentViewSet(viewsets.ModelViewSet):
-    queryset = Assignment.objects.all()
-    serializer_class = AssignmentSerializer
-
-
-class UnitViewSet(viewsets.ModelViewSet):
-    queryset = Unit.objects.all()
-    serializer_class = UnitSerializer
+# Not needed since everything can be obtained from the course api
+#
+# class AssignmentViewSet(viewsets.ModelViewSet):
+#     queryset = Assignment.objects.all()
+#     serializer_class = AssignmentSerializer
+#
+#
+# class UnitViewSet(viewsets.ModelViewSet):
+#     queryset = Unit.objects.all()
+#     serializer_class = UnitSerializer
 
 
 class CourseViewSet(viewsets.ModelViewSet):
-    queryset = Course.objects.all()
+    # queryset = Course.objects.all()
     serializer_class = CourseSerializer
+
+    def get_queryset(self):
+        return self.request.user.student.courses.all()

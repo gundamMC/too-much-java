@@ -16,7 +16,7 @@ class Course(models.Model):
     name = models.CharField(max_length=64)
     description = models.TextField(blank=True, null=True)
 
-    students = models.ManyToManyField(Student)
+    students = models.ManyToManyField(Student, related_name='courses')
 
     def __str__(self):
         return str(self.name)
@@ -69,7 +69,7 @@ class Submission(models.Model):
     points = models.PositiveSmallIntegerField(default=0)
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE, related_name='submissions')
     submitted_date = models.DateTimeField(auto_now_add=True)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='submissions')
 
     def grade(self):
         if self.points is None:
