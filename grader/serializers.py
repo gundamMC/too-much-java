@@ -24,6 +24,22 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
 class AssignmentSerializer(serializers.ModelSerializer):
 
+    def to_representation(self, instance):
+        if hasattr(instance, 'codefileassignment'):
+            print('is code')
+            return CodeFileAssignmentSerializer(instance=instance.codefileassignment).data
+        else:
+            if isinstance(instance, Assignment):
+                print('is assignment')
+            return BaseAssignmentSerializer(instance=instance).data
+
+    class Meta:
+        model = Assignment
+        fields = '__all__'
+
+
+class BaseAssignmentSerializer(serializers.ModelSerializer):
+
     def get_type(self, obj):
         if hasattr(obj, 'codefileassignment'):
             return 'code'
@@ -34,8 +50,24 @@ class AssignmentSerializer(serializers.ModelSerializer):
 
     type = serializers.SerializerMethodField()
 
+    def global_get_highest_points(self, obj):
+        if obj.submissions.count() < 1:
+            return -1
+        else:
+            return obj.submissions.order_by('-points').first().points
+
+    get_highest_points = global_get_highest_points
+    highest_points = serializers.SerializerMethodField()
+
     class Meta:
         model = Assignment
+        fields = '__all__'
+
+
+class CodeFileAssignmentSerializer(BaseAssignmentSerializer):
+
+    class Meta:
+        model = CodeFileAssignment
         fields = '__all__'
 
 

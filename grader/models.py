@@ -66,15 +66,14 @@ class QuizAssignment(Assignment):
 
 
 class Submission(models.Model):
-    total_points = models.PositiveSmallIntegerField(default=None, blank=True, null=True)
-    points = models.PositiveSmallIntegerField(default=None, blank=True, null=True)
-    assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
+    points = models.PositiveSmallIntegerField(default=0)
+    assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE, related_name='submissions')
     submitted_date = models.DateTimeField(auto_now_add=True)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
 
     def grade(self):
         if self.points is None:
-            files = self.fileupload_set.all()
+            files = self.files.all()
 
             tmp_path = r'D:\tmp'
             junit_path = r'D:\junit-platform-console-standalone-1.4.2.jar'

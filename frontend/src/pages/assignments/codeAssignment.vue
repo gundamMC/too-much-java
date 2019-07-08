@@ -1,16 +1,16 @@
 <template>
 
-    <el-card style="padding: 20px; margin: 0 20px;">
+    <el-card style="padding: 20px; margin: 0 40px;">
         <el-row>
-            <h1>Practice Programming Assignment: Python Basics with numpy (optional)</h1>
+            <h1>{{assignment.name}}</h1>
         </el-row>
         <el-row>
-            <i class="el-icon-circle-check"></i> Passed · 100/100 points
+            <i class="el-icon-circle-check"></i> Passed · {{assignment.highest_points}}/{{assignment.points}} points
         </el-row>
 
         <el-row>
             <b>Deadline</b>
-            <span style="margin-left: 10px">The assignment was due on December 31, 11:59 PM PST</span>
+            <span style="margin-left: 10px">The assignment is due on {{assignment.due_date}}</span>
         </el-row>
 
         <el-row>
@@ -23,6 +23,17 @@
                             It might take up to one minute for our graders to process your submission.
                             You will see the point break down of your assignment along with the grader feedback.
                             </p>
+                            <el-row>
+                                <h2>Overview</h2>
+                                <p>
+                                    {{assignment.description}}
+                                </p>
+                            </el-row>
+                            <el-divider></el-divider>
+                            <el-row>
+                                <markdown v-if="load_markdown" :source="assignment.instructions"></markdown>
+                            </el-row>
+
                         </el-col>
                         <el-col :span="6">
                             <div class="instruction_sidebar">
@@ -121,30 +132,35 @@
 
 <script>
     import submit from '../../components/Submit';
+    import markdown from '../../components/Markdown';
 
     export default {
         components: {
-            submit
+            submit,
+            markdown
         },
         data() {
             return {
-                assignment: {}
             }
         },
-        created() {
-            this.$api
-                .get(`assignment/${this.$route.params.id}/`)
-                .then(response => {
+        computed: {
+            assignment() {
+                if (this.$store.getters.courseLoaded){
+                    return this.$store.getters.assignment(this.$route.params.id, this.$route.params.unit_id, this.$route.params.assignment_id);
+                }
+                else{
+                    return {};
+                }
 
-                    this.assignment = response.data;
-
-                });
+            },
+            load_markdown() {
+                return this.$store.getters.courseLoaded && this.assignment.instructions != null;
+            }
         }
     }
 </script>
 
 <style scoped>
-
     .el-row {
         margin-top: 30px
     }
@@ -155,4 +171,5 @@
         margin-left: 10px;
         margin-bottom: 30px;
     }
+
 </style>
