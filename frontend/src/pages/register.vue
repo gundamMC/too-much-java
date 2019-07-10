@@ -5,7 +5,7 @@
 
             <el-divider></el-divider>
 
-            <el-form :rules="rules" :model="model">
+            <el-form :rules="rules" :model="model" ref="form">
                 <el-form-item prop="username">
                     <el-input
                         v-model="model.username"
@@ -13,9 +13,9 @@
                         prefix-icon="el-icon-user-solid">
                     </el-input>
                 </el-form-item>
-                <el-form-item prop="studentID">
+                <el-form-item prop="student_id">
                     <el-input
-                        v-model.number="model.studentID"
+                        v-model.number="model.student_id"
                         placeholder="Student ID"
                         prefix-icon="el-icon-collection-tag">
                     </el-input>
@@ -39,7 +39,7 @@
                 </el-form-item>
                 <el-form-item prop="confirmPassword">
                     <el-input
-                        v-model="model.confirmPassword"
+                            v-model="model.confirmPassword"
                         placeholder="Confirm Password"
                         show-password
                         prefix-icon="el-icon-lock">
@@ -88,9 +88,9 @@
                 model: {
                     username: '',
                     password: '',
-                    confirmPassword: '',
-                    studentID: '',
-                    grade: null
+                    student_id: '',
+                    grade: null,
+                    code: ''  // using underscore b/c that's what python uses
                 },
                 rules: {
                     username: [
@@ -103,7 +103,7 @@
                       { required: true, message: "Enter your password again", trigger: "blur" },
                         { validator: validatePassMatch, trigger: "blur"}
                     ],
-                    studentID: [
+                    student_id: [
                         { required: true, message: 'Student ID is required'},
                         { type: 'number', message: 'Student ID must be a number'}
                     ],
@@ -123,10 +123,35 @@
         },
         methods: {
             onSubmit () {
-                this.$store.dispatch('obtainToken',
-                    {username: this.model.username,password: this.model.password, responseMessage: (message) => {
-                    this.$message({message: message, type: 'error'});
-                }});
+                this.$refs.form.validate((valid) => {
+                    if (valid){
+                        this.$api
+                    .post('register/', this.model)
+                    .then(() => {
+                        // success, now grab a token
+                        this.$store.dispatch('obtainToken',
+                            {username: this.model.username, password: this.model.password, responseMessage: (message) => {
+                            this.$message({message: message, type: 'error'});
+                        }});
+                      })
+                      .catch(error => {
+                          if (error.response.status === 400){
+                              for (let i = 0; i < error.response.data.length; i++){
+                                this.$message({message: error.response.data[i], type: 'error'});
+                            }
+                          }
+                          else if (error.response.status === 500){
+                              if (error.response.data.includes('UNIQUE constraint failed: auth_user.username')){
+                                  this.$message({message: 'Username already used', type: 'error'});
+                              }
+                          }
+                      });
+                    } else {
+                        this.$message({message: "Invalid registration information!", type: 'error'});
+                    }
+                });
+
+
             }
         }
     }

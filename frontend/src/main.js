@@ -16,8 +16,9 @@ import App from './App.vue';
 import axios from "axios";
 import $axios from './axios-instance';
 
-axios.defaults.headers.common['Authorization'] =
-                                'jwt ' + store.getters.token;
+if (store.getters.token != null)
+    axios.defaults.headers.common['Authorization'] =
+                                    'jwt ' + store.getters.token;
 
 
 Vue.use({
