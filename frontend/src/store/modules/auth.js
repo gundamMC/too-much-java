@@ -44,6 +44,7 @@ const actions = {
             .then((response) => {
                 context.commit('updateToken', response.data.token);
                 context.dispatch('getCourses');
+                context.dispatch('getUser');
                 router.push('/');
             })
             .catch((error) => {
@@ -85,17 +86,16 @@ const actions = {
 
                 if ((Date.now()/1000) > exp) {
                     // token expired
-                    console.log('re login');
                     context.commit('removeToken');
-                } else if ((Date.now()/1000) > exp - 1800 && (Date.now()/1000) < orig_iat + 604800) {
-                    // 1800 = 30 minutes
+                } else if ((Date.now()/1000) > exp - 14400 && (Date.now()/1000) < orig_iat + 604800) {
+                    // 14400 = 4 hours before expire
                     // 604800 = 7 days
                     // expires within 30 minutes and token is still within lifespan
-                    console.log('refresh');
                     context.dispatch('refreshToken');
                 } else {
-                    // everything is normal, proceed to get course list
+                    // everything is normal, proceed to get course list and user
                     context.dispatch('getCourses');
+                    context.dispatch('getUser');
                 }
             }
 

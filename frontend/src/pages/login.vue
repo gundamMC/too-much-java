@@ -5,17 +5,17 @@
             <el-form :rules="rules" :model="model">
                 <el-form-item prop="username">
                     <el-input
-                        v-model="model.username"
-                        placeholder="Username"
-                        prefix-icon="el-icon-user-solid">
+                            v-model="model.username"
+                            placeholder="Username"
+                            prefix-icon="el-icon-user-solid">
                     </el-input>
                 </el-form-item>
                 <el-form-item prop="password">
                     <el-input
-                        v-model="model.password"
-                        placeholder="Password"
-                        show-password
-                        prefix-icon="el-icon-lock">
+                            v-model="model.password"
+                            placeholder="Password"
+                            show-password
+                            prefix-icon="el-icon-lock">
                     </el-input>
                 </el-form-item>
                 <el-form-item>
@@ -27,17 +27,18 @@
 
             <div>
                 <el-popover
-                content="Please contact your instructor to reset your password."
-                placement="top-start"
-                title="Reset password"
-                trigger="hover"
-                width="200"
-                style="float: left">
-                <el-button slot="reference" type="text">Forgot password</el-button>
-              </el-popover>
-              <el-button type="text" style="float: right;">Register</el-button>
+                        content="Please contact your instructor to reset your password."
+                        placement="top-start"
+                        title="Reset password"
+                        trigger="hover"
+                        width="200"
+                        style="float: left">
+                    <el-button slot="reference" type="text">Forgot password</el-button>
+                </el-popover>
+                <router-link to="register">
+                    <el-button type="text" style="float: right;">Register</el-button>
+                </router-link>
             </div>
-            
         </el-card>
     </div>
 </template>
@@ -45,7 +46,7 @@
 <script>
 
     export default {
-        data () {
+        data() {
             return {
                 model: {
                     username: '',
@@ -53,25 +54,27 @@
                 },
                 rules: {
                     username: [
-                      { required: true, message: "Username is required", trigger: "blur" }
+                        {required: true, message: "Username is required", trigger: "blur"}
                     ],
                     password: [
-                      { required: true, message: "Password is required", trigger: "blur" }
+                        {required: true, message: "Password is required", trigger: "blur"}
                     ]
-                  }
+                }
             }
         },
         computed: {
-            loading () {
+            loading() {
                 return this.$store.getters.loginLoading;
             }
         },
         methods: {
-            onSubmit () {
+            onSubmit() {
                 this.$store.dispatch('obtainToken',
-                    {username: this.model.username,password: this.model.password, responseMessage: (message) => {
-                    this.$message({message: message, type: 'error'});
-                }});
+                    {
+                        username: this.model.username, password: this.model.password, responseMessage: (message) => {
+                            this.$message({message: message, type: 'error'});
+                        }
+                    });
             }
         }
     }

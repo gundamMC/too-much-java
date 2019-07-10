@@ -7,7 +7,11 @@ const state = {
 
 const mutations = {
     updateCourseList(state, newCourse){
-        state.courseList = newCourse
+        state.courseList = newCourse;
+    },
+
+    removeCourseList(state){
+        state.courseList = null;
     }
 };
 
