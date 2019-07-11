@@ -11,7 +11,7 @@
                 :src="logo"/>
                 <span>Too Much Java</span>
             </el-menu-item>
-            <el-menu-item index="/test/">
+            <el-menu-item index="/dashboard/">
                 <i class="el-icon-menu"></i>
                 <span slot="title">Dashboard</span>
             </el-menu-item>
