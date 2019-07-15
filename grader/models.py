@@ -1,12 +1,12 @@
 import subprocess
 import os
 import json
-import datetime
 
 from shutil import copy
 
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
 
 from users.models import Student
 
@@ -88,7 +88,9 @@ class Submission(models.Model):
         if self.points == 0:  # don't re-grade submissions
             files = self.files.all()
 
-            tmp_build_path = os.path.join(settings.GRADE_TMP_PATH, str(self.id), str(datetime.datetime.now().microsecond))
+            tmp_build_path = os.path.join(settings.GRADE_TMP_PATH, str(self.id))
+            # builds at ./grade_tmp/[submission_id]
+            # should be unique enough since submission id is unique
             tester_path = self.assignment.codefileassignment.tester_path.path
             file_paths = [fileField.file.path for fileField in files]
             file_paths.append(tester_path)  # add junit tester to the list of files to be compiled
@@ -117,7 +119,7 @@ class Submission(models.Model):
                 check = SubmissionCheck(name='Compilation', passed=False, details=message,
                                         submission=self)
                 check.save()
-                self.submitted_date = datetime.datetime.now()
+                self.submitted_date = timezone.now()
                 return self.points
 
             # build controller
@@ -158,7 +160,7 @@ class Submission(models.Model):
                 check = SubmissionCheck(name=test['name'], passed=test['passed'], details=test['details'], submission=self)
                 check.save()
 
-            self.submitted_date = datetime.datetime.now()
+            self.submitted_date = timezone.now()
 
         return self.points
 
@@ -171,7 +173,7 @@ class SubmissionCheck(models.Model):
 
 
 def content_file_name(instance, filename):
-    now = datetime.datetime.now()
+    now = timezone.now()
     return '/'.join(['uploads',
                      str(instance.submission.student.student_id),
                      str(now.year),

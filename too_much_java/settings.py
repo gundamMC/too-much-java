@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/2.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
-import datetime
+from django.utils import timezone
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -150,8 +150,8 @@ REST_FRAMEWORK = {
 # jwt
 JWT_AUTH = {
     'JWT_ALLOW_REFRESH': True,
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(hours=12),
-    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
+    'JWT_EXPIRATION_DELTA': timezone.timedelta(hours=12),
+    'JWT_REFRESH_EXPIRATION_DELTA': timezone.timedelta(days=7),
 }
 
 # grader

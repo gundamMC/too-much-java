@@ -1,9 +1,9 @@
-from datetime import date
 import os
 
 from rest_framework import serializers
 from .models import FileUpload, Submission, Assignment, CodeFileAssignment, QuizAssignment, Unit, Course, SubmissionCheck
 
+from django.utils import timezone
 from django.template.defaultfilters import filesizeformat
 
 
@@ -105,7 +105,7 @@ class UnitSerializer(serializers.ModelSerializer):
     assignments = serializers.SerializerMethodField()
 
     def get_latest(self, obj):
-        assignments = obj.assignments.filter(due_date__gt=date.today()).order_by('due_date')[:3]
+        assignments = obj.assignments.filter(due_date__gt=timezone.now()).order_by('due_date')[:3]
         assignment_ids = [x.id for x in assignments]
         return assignment_ids
 
