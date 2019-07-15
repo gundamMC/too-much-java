@@ -31,6 +31,7 @@
                         <div slot="header">
                             <h3>{{unit.name}}</h3>
                             <p>{{unit.description}}</p>
+                            <router-link :to="'unit/' + unit.id + '/'">Go to unit</router-link>
                         </div>
                         <div>
                             <el-row type="flex" align="middle">

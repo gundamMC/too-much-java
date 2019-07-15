@@ -3,7 +3,7 @@
     <el-main style="margin-top: 60px;">
       <router-view></router-view>
     </el-main>
-    <el-header style="position: fixed; width: 100%; top: 0;">
+    <el-header style="position: fixed; width: 100%; top: 0; z-index: 1000">
       <NavMenu/>
     </el-header>
   </el-container>

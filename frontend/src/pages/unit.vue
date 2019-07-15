@@ -40,17 +40,17 @@
                             <el-timeline-item :key="assignment.id" :timestamp="assignment.date" placement="top"
                                               v-for="assignment in unit.assignments">
                                 <router-link :to="'assignment/' + assignment.id + '/'">
-                                <el-card shadow="hover">
-                                    <div slot="header">
-                                        <i class="el-icon-document" v-if="assignment.type === 'code'"></i>
-                                        <i class="el-icon-menu" v-else-if="assignment.type === 'quiz'"></i>
-                                        <i class="el-icon-notebook-2" v-else></i>
-                                        <span>    {{assignment.name}}</span>
-                                    </div>
-                                    <p>{{assignment.description}}</p>
-                                    <p class="small-font">Due: {{assignment.due_date}}</p>
-                                </el-card>
-                                    </router-link>
+                                    <el-card shadow="hover">
+                                        <div slot="header">
+                                            <i class="el-icon-document" v-if="assignment.type === 'code'"></i>
+                                            <i class="el-icon-menu" v-else-if="assignment.type === 'quiz'"></i>
+                                            <i class="el-icon-notebook-2" v-else></i>
+                                            <span>    {{assignment.name}}</span>
+                                        </div>
+                                        <p>{{assignment.description}}</p>
+                                        <p class="small-font">Due: {{assignment.due_date}}</p>
+                                    </el-card>
+                                </router-link>
                             </el-timeline-item>
                         </el-timeline>
                     </div>
@@ -63,7 +63,6 @@
 </template>
 
 <script>
-    import moment from 'moment';
     import sideBar from '../components/SideBar';
 
     export default {
