@@ -153,3 +153,9 @@ JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(hours=12),
     'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
 }
+
+# grader
+GRADE_TMP_PATH = os.path.join(BASE_DIR, 'grader_tmp')
+JUNIT_PATH = os.path.join(BASE_DIR, 'grader_resources', 'junit-platform-console-standalone-1.5.0.jar')
+JSON_PATH = os.path.join(BASE_DIR, 'grader_resources', 'json-20180813.jar')
+GRADER_CONTROLLER_PATH = os.path.join(BASE_DIR, 'grader_resources', 'testController.java')

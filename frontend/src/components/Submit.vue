@@ -6,8 +6,9 @@
                    action="/api/upload/"
                    :data="{submission: sub_id}"
                    :multiple="true"
-                   :headers="{ 'X-CSRFToken': csrf}"
+                   :headers="{ 'X-CSRFToken': csrf, 'Authorization': 'jwt ' + this.$store.getters.token}"
                    :auto-upload="false"
+                   :on-success="onSuccess"
                     style="width: 360px"
         >
             <i class="el-icon-upload"></i>
@@ -56,7 +57,6 @@
                         this.$nextTick(
                             () => (this.$refs.upload.submit())
                         );
-
                     });
 
 
@@ -64,6 +64,17 @@
 
             clearFiles() {
                 this.$refs.upload.clearFiles();
+            },
+
+            onSuccess() {
+
+                this.$api
+                    .get('submission/' + this.sub_id + '/grade/')
+                    .then(response => (this.$store.dispatch('setSubmissions', response.data)));
+
+                // setTimeout(() => this.$store.dispatch('getSubmissions', this.assignment.id), 10000);
+                        // refresh submissions after 10 seconds
+
             }
         }
     }

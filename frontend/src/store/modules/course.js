@@ -2,7 +2,9 @@ import $axios from '../../axios-instance';
 import moment from "moment";
 
 const state = {
-    courseList: null
+    courseList: null,
+    submissions: {},
+    submissionsLoading: true
 };
 
 const mutations = {
@@ -12,7 +14,20 @@ const mutations = {
 
     removeCourseList(state){
         state.courseList = null;
-    }
+    },
+
+    updateSubmissions(state, newSubmission){
+        state.submissions = newSubmission;
+    },
+
+    startSubmissionsLoading(state){
+        state.submissionsLoading = true;
+    },
+
+    finishSubmissionsLoading(state){
+        state.submissionsLoading = false;
+    },
+
 };
 
 const actions = {
@@ -44,6 +59,32 @@ const actions = {
 
                 }
             );
+    },
+
+    getSubmissions(context, assignment_id) {
+        context.commit('startSubmissionsLoading');
+
+        $axios
+            .get('assignment/' +  assignment_id + '/submissions/')
+            .then(
+                response => {
+                    // update submissions info
+                    for (let i = 0; i < response.data.length; i++){
+                        response.data[i].submitted_date = moment(response.data[i].submitted_date).format('dddd MMMM Do, YYYY [at] h:mm:ss a');
+                    }
+
+                    context.commit('updateSubmissions', response.data);
+                }
+            ).finally(context.commit('finishSubmissionsLoading'));
+    },
+
+    setSubmissions(context, submissions_data) {
+        // used for updating raw data returned by grading new submissions
+        for (let i = 0; i < submissions_data.length; i++){
+            submissions_data[i].submitted_date = moment(submissions_data[i].submitted_date).format('dddd MMMM Do, YYYY [at] h:mm:ss a');
+        }
+
+        context.commit('updateSubmissions', submissions_data);
     }
 };
 
@@ -62,7 +103,10 @@ const getters = {
     },
     assignment: (state, getters) => (course_id, unit_id, assignment_id) => {
         return getters.unit(course_id, unit_id).assignments.find(x => x.id == assignment_id);
-    }
+    },
+    submissions(state) {
+        return state.submissions;
+}
 };
 
 export default {

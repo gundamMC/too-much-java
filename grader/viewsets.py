@@ -28,7 +28,7 @@ class FileUploadViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
 class SubmissionViewSet(viewsets.ModelViewSet):
 
-    queryset = Submission.objects.all()
+    # queryset = Submission.objects.all()
     serializer_class = SubmissionSerializer
 
     # set query set to the student's own submissions only
@@ -40,18 +40,11 @@ class SubmissionViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         submission = serializer.save()
         submission.total_points = submission.assignment.points
+        # submission.grade()
         submission.save()
 
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-    @action(methods=['post'], detail=False)
-    def test(self, request):
-
-        print('test')
-        print(request.data)
-
-        return Response()
 
     @action(methods=['get'], detail=True)
     def grade(self, request, pk=None):
@@ -59,23 +52,27 @@ class SubmissionViewSet(viewsets.ModelViewSet):
         submission = get_object_or_404(Submission, pk=pk)
         grade = submission.grade()
         submission.save()
-        return Response({'submission_id': pk, 'grade': grade})
+        return self.list(request)
+
+    # @action(methods=['get'], detail=True)
+    # def files(self, request, pk=None):
+    #     submission = get_object_or_404(Submission, pk=pk)
+    #     return Response({
+    #         'submission_id': pk,
+    #         'files': FileUploadSerializer(submission.files.all(), many=True).data
+    #         })
+
+
+class AssignmentViewSet(viewsets.ModelViewSet):
+    queryset = Assignment.objects.all()
+    serializer_class = AssignmentSerializer
 
     @action(methods=['get'], detail=True)
-    def files(self, request, pk=None):
-        submission = get_object_or_404(Submission, pk=pk)
-        return Response({
-            'submission_id': pk,
-            'files': FileUploadSerializer(submission.files.all(), many=True).data
-            })
+    def submissions(self, request, pk=None):
+        assignment = get_object_or_404(Assignment, pk=pk)
+        return Response(SubmissionSerializer(assignment.submissions.filter(student=request.user.student), many=True).data)
 
 
-# Not needed since everything can be obtained from the course api
-#
-# class AssignmentViewSet(viewsets.ModelViewSet):
-#     queryset = Assignment.objects.all()
-#     serializer_class = AssignmentSerializer
-#
 #
 # class UnitViewSet(viewsets.ModelViewSet):
 #     queryset = Unit.objects.all()

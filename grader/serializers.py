@@ -1,7 +1,10 @@
 from datetime import date
+import os
 
 from rest_framework import serializers
-from .models import FileUpload, Submission, Assignment, CodeFileAssignment, QuizAssignment, Unit, Course
+from .models import FileUpload, Submission, Assignment, CodeFileAssignment, QuizAssignment, Unit, Course, SubmissionCheck
+
+from django.template.defaultfilters import filesizeformat
 
 
 class FileUploadSerializer(serializers.ModelSerializer):
@@ -13,8 +16,16 @@ class FileUploadSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class SubmissionCheckSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = SubmissionCheck
+        fields = ['details', 'name', 'passed']
+
+
 class SubmissionSerializer(serializers.ModelSerializer):
     files = FileUploadSerializer(many=True, read_only=True)
+    checks = SubmissionCheckSerializer(many=True, read_only=True)
 
     class Meta:
         model = Submission
@@ -50,13 +61,13 @@ class BaseAssignmentSerializer(serializers.ModelSerializer):
 
     type = serializers.SerializerMethodField()
 
-    def global_get_highest_points(self, obj):
+    def get_highest_points(self, obj):
         if obj.submissions.count() < 1:
             return -1
         else:
             return obj.submissions.order_by('-points').first().points
 
-    get_highest_points = global_get_highest_points
+    get_highest_points = get_highest_points
     highest_points = serializers.SerializerMethodField()
 
     class Meta:
@@ -66,9 +77,23 @@ class BaseAssignmentSerializer(serializers.ModelSerializer):
 
 class CodeFileAssignmentSerializer(BaseAssignmentSerializer):
 
+    def get_file_size(self, obj):
+        if obj.code_template is None:
+            return None
+        return filesizeformat(obj.code_template.size)
+
+    def get_file_name(self, obj):
+        if obj.code_template is None:
+            return None
+        return os.path.basename(obj.code_template.name)
+
+    file_size = serializers.SerializerMethodField()
+    file_name = serializers.SerializerMethodField()
+
     class Meta:
         model = CodeFileAssignment
-        fields = '__all__'
+        # fields = '__all__'
+        exclude = ['tester_path']
 
 
 class UnitSerializer(serializers.ModelSerializer):
@@ -96,4 +121,5 @@ class CourseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Course
-        fields = '__all__'
+        # fields = '__all__'
+        exclude = ['students']

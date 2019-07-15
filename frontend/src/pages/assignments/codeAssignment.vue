@@ -5,7 +5,7 @@
             <h1>{{assignment.name}}</h1>
         </el-row>
         <el-row>
-            <i class="el-icon-circle-check"></i> Passed · {{assignment.highest_points}}/{{assignment.points}} points
+            <i :class="statusIcon"></i> {{status}} · {{statusHighestPoint}}/{{assignment.points}} points
         </el-row>
 
         <el-row>
@@ -64,11 +64,11 @@
                             <el-row type="flex">
                                 <i class="el-icon-files" style="font-size: 60px"></i>
                                 <div style="margin-left: 20px">
-                                    <h2>test_file.zip</h2>
-                                    10.2 mb
+                                    <h2>{{assignment.file_name}}</h2>
+                                    {{assignment.file_size}}
                                 </div>
 
-                                <el-button type="primary" style="margin-left: 100px; width: 250px">Download</el-button>
+                                <el-button type="primary" style="margin-left: 100px; width: 250px" @click="download">Download</el-button>
 
                             </el-row>
 
@@ -113,13 +113,35 @@
                     <el-row>
                         <h2>Submissions</h2>
 
-                        <el-collapse>
-                            <el-collapse-item title="Consistency" name="1">
-                                <div>Consistent with real life: in line with the process and logic of real life, and comply with languages and habits that the users are used to;</div>
-                                <div>Consistent within interface: all elements should be consistent, such as: design style, icons and texts, position of elements, etc.</div>
+                        <el-collapse v-if="submissions.length > 0">
+                            <el-collapse-item
+                                    v-for="submission in submissions"
+                                    :title="submission.submitted_date + ' - ' + submission.points + '/' + assignment.points"
+                                    :name="submission.id"
+                                    :key="submission.id">
+                                <el-table
+                                        v-if="submission.checks.length > 0"
+                                        :data="submission.checks"
+                                        style="width: 100%">
+                                    <el-table-column
+                                            prop="name"
+                                            label="Test Name"
+                                            width="180">
+                                    </el-table-column>
+                                    <el-table-column
+                                            prop="details"
+                                            label="Details">
+                                    </el-table-column>
+                                </el-table>
+                                <p v-else>
+                                    Unexpected error. (Typically a compilation error)
+                                </p>
                             </el-collapse-item>
 
                         </el-collapse>
+                        <p  v-else>
+                           Upload a new submission to see your results.
+                        </p>
                     </el-row>
 
                 </el-tab-pane>
@@ -133,6 +155,7 @@
 <script>
     import submit from '../../components/Submit';
     import markdown from '../../components/Markdown';
+    import settings from '../../settings';
 
     export default {
         components: {
@@ -145,16 +168,48 @@
         },
         computed: {
             assignment() {
-                if (this.$store.getters.courseLoaded){
-                    return this.$store.getters.assignment(this.$route.params.id, this.$route.params.unit_id, this.$route.params.assignment_id);
-                }
-                else{
-                    return {};
-                }
-
+                return this.$store.getters.assignment(this.$route.params.id, this.$route.params.unit_id, this.$route.params.assignment_id);
             },
             load_markdown() {
                 return this.$store.getters.courseLoaded && this.assignment.instructions != null;
+            },
+            submissions() {
+                return this.$store.getters.submissions;
+            },
+            status() {
+                switch (this.assignment.highest_points){
+                    case -1:
+                        return "Not attempted";
+                    case this.assignment.points:
+                        return "Passed";
+                    default:
+                        return "Attempted";
+                }
+            },
+            statusIcon() {
+                switch (this.assignment.highest_points){
+                    case -1:
+                        return "el-icon-warning-outline";
+                    case this.assignment.points:
+                        return "el-icon-circle-check";
+                    default:
+                        return "el-icon-circle-plus-outline";
+                }
+            },
+            statusHighestPoint() {
+                if (this.assignment.highest_points === -1)
+                    return "-";
+                else
+                    return this.assignment.highest_points;
+            }
+
+        },
+        created() {
+            this.$store.dispatch('getSubmissions', this.$route.params.assignment_id);
+        },
+        methods: {
+            download() {
+                window.open(settings.download_domain + '/' + this.assignment.code_template);
             }
         }
     }

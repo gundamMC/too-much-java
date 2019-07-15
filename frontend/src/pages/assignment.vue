@@ -6,7 +6,7 @@
         </el-aside>
         <el-main>
             <!-- insert assignment component -->
-            <codeAssignment/>
+            <codeAssignment v-if="assignment.type === 'code'" />
         </el-main>
     </el-container>
 </template>
@@ -20,6 +20,16 @@
         components: {
             assignmentsSideBar,
             codeAssignment
+        },
+        computed: {
+            assignment() {
+                if (this.$store.getters.courseLoaded){
+                    return this.$store.getters.assignment(this.$route.params.id, this.$route.params.unit_id, this.$route.params.assignment_id);
+                }
+                else{
+                    return {};
+                }
+            },
         }
     }
 </script>
