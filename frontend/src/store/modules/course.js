@@ -4,7 +4,8 @@ import moment from "moment";
 const state = {
     courseList: null,
     submissions: {},
-    submissionsLoading: true
+    submissionsLoading: true,
+    submissionAssignmentID: null
 };
 
 const mutations = {
@@ -27,6 +28,10 @@ const mutations = {
     finishSubmissionsLoading(state){
         state.submissionsLoading = false;
     },
+
+    updateSubmissionAssignmentID(state, newID){
+        state.submissionAssignmentID = newID;
+    }
 
 };
 
@@ -63,6 +68,7 @@ const actions = {
 
     getSubmissions(context, assignment_id) {
         context.commit('startSubmissionsLoading');
+        context.commit('updateSubmissionAssignmentID', assignment_id);
 
         $axios
             .get('assignment/' +  assignment_id + '/submissions/')
@@ -106,7 +112,10 @@ const getters = {
     },
     submissions(state) {
         return state.submissions;
-}
+    },
+    submissionAssignmentID(state){
+        return state.submissionAssignmentID;
+    }
 };
 
 export default {

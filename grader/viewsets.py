@@ -50,9 +50,9 @@ class SubmissionViewSet(viewsets.ModelViewSet):
     def grade(self, request, pk=None):
         print(pk)
         submission = get_object_or_404(Submission, pk=pk)
-        grade = submission.grade()
+        submission.grade()
         submission.save()
-        return self.list(request)
+        return Response(SubmissionSerializer(submission.assignment.submissions, many=True).data)
 
     # @action(methods=['get'], detail=True)
     # def files(self, request, pk=None):

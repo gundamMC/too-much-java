@@ -174,7 +174,12 @@
                 return this.$store.getters.courseLoaded && this.assignment.instructions != null;
             },
             submissions() {
-                return this.$store.getters.submissions;
+                if (this.$store.getters.submissionAssignmentID === this.$route.params.assignment_id)
+                    return this.$store.getters.submissions;
+                else
+                    // request refresh
+                    this.$store.dispatch('getSubmissions', this.$route.params.assignment_id);
+                    return {};
             },
             status() {
                 switch (this.assignment.highest_points){
@@ -204,7 +209,7 @@
             }
 
         },
-        created() {
+        created(){
             this.$store.dispatch('getSubmissions', this.$route.params.assignment_id);
         },
         methods: {
