@@ -13,24 +13,14 @@ from django.utils import timezone
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# One extra dirname since the settings folder is one directory deeper
 
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 FRONTEND_DIR = os.path.join(BASE_DIR, 'frontend')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'upload')
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'xgl5xsqy-c7e1!)gi29kq3o*#iu_8)xmwc!f=_8w-m^kh=)@0='
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -79,17 +69,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'too_much_java.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-
-
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 
@@ -128,7 +107,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# webpack
+# Webpack
 WEBPACK_LOADER = {
     'DEFAULT': {
         'CACHE': DEBUG,
@@ -137,7 +116,7 @@ WEBPACK_LOADER = {
     }
 }
 
-# api auth
+# API auth
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
@@ -147,14 +126,15 @@ REST_FRAMEWORK = {
     )
 }
 
-# jwt
+# JWT
 JWT_AUTH = {
     'JWT_ALLOW_REFRESH': True,
     'JWT_EXPIRATION_DELTA': timezone.timedelta(hours=12),
     'JWT_REFRESH_EXPIRATION_DELTA': timezone.timedelta(days=7),
 }
 
-# grader
+# Grader
+# Paths for the java compiler to use
 GRADE_TMP_PATH = os.path.join(BASE_DIR, 'grader_tmp')
 JUNIT_PATH = os.path.join(BASE_DIR, 'grader_resources', 'junit-platform-console-standalone-1.5.0.jar')
 JSON_PATH = os.path.join(BASE_DIR, 'grader_resources', 'json-20180813.jar')
