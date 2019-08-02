@@ -1,6 +1,4 @@
-import os
-
-from too_much_java.settings.base import *
+from .base import *
 
 
 # Secret key - don't put your production secret key here
@@ -17,7 +15,11 @@ ALLOWED_HOSTS = [
     'www.example.com'
 ]
 
-STATIC_ROOT = os.path.join(FRONTEND_DIR, 'dist')
+STATICFILES_DIRS = (
+    os.path.join(FRONTEND_DIR, 'dist'),
+    # frontend files
+)
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 
 # Database
@@ -27,10 +29,10 @@ STATIC_ROOT = os.path.join(FRONTEND_DIR, 'dist')
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'tmj_db',
+        'NAME': 'tmj',
         'USER': os.environ['TMJ_DB_USER'],
         'PASSWORD': os.environ['TMJ_DB_PASS'],
         'HOST': '127.0.0.1',
-        'PORT': '23333',
+        'PORT': '5432',
     }
 }
