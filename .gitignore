@@ -107,3 +107,10 @@ local_settings.py
 
 .env
 db.sqlite3
+
+
+
+### TMJ ###
+static/
+frontend/dist/
+frontend/webpack-stats.json
