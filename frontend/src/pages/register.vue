@@ -138,13 +138,18 @@
                             })
                             .catch(error => {
                                 if (error.response.status === 400) {
-                                    for (let i = 0; i < error.response.data.length; i++) {
-                                        this.$message({message: error.response.data[i], type: 'error'});
+                                    if (Array.isArray(error.response.data)){
+                                        for (let i = 0; i < error.response.data.length; i++)
+                                            this.$message({message: error.response.data[i], type: 'error'});
                                     }
-                                } else if (error.response.status === 500) {
-                                    if (error.response.data.includes('UNIQUE constraint failed: auth_user.username')) {
-                                        this.$message({message: 'Username already used', type: 'error'});
+                                    else if (typeof error.response.data === 'object'){
+                                        let keys = Object.keys(error.response.data);
+                                        for (let i = 0; i < keys.length; i++)
+                                            this.$message({message: error.response.data[keys[i]][0], type: 'error'});
                                     }
+
+                                } else {
+                                    this.$message({message: error.response.data.toString(), type: 'error'});
                                 }
                             });
                     } else {

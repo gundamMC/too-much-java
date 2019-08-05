@@ -2,8 +2,6 @@ import subprocess
 import os
 import json
 
-from shutil import copy
-
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
@@ -17,10 +15,18 @@ class Course(models.Model):
     name = models.CharField(max_length=64)
     description = models.TextField(blank=True, null=True)
 
-    students = models.ManyToManyField(Student, related_name='courses')
+    students = models.ManyToManyField(Student, related_name='courses', blank=True)
 
     def __str__(self):
         return str(self.name)
+
+
+class CourseCode(models.Model):
+    code = models.CharField(max_length=16)
+    courses = models.ManyToManyField(Course, related_name='courses')
+
+    def __str__(self):
+        return str(self.code)
 
 
 class Unit(models.Model):
