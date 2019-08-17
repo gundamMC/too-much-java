@@ -62,7 +62,7 @@
                 </el-form-item>
             </el-form>
 
-            <router-link to="login">
+            <router-link to="/login">
                 <el-button type="text" style="float: right;">Login</el-button>
             </router-link>
 

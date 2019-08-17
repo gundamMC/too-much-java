@@ -35,7 +35,7 @@
                         style="float: left">
                     <el-button slot="reference" type="text">Forgot password</el-button>
                 </el-popover>
-                <router-link to="register">
+                <router-link to="/register">
                     <el-button type="text" style="float: right;">Register</el-button>
                 </router-link>
             </div>
