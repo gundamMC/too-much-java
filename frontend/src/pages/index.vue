@@ -9,7 +9,7 @@
             <h1 style="font-size: 24px">{{host}}</h1>
           </div>
 
-        <div class="footer">
+        <div class="footer" style="background-color: #FFFFFF; padding: 0 0 20px 0">
             <el-divider></el-divider>
             <p>
                 By <a href="https://gundammc.com">gundamMC</a>,
@@ -52,6 +52,10 @@ export default {
 
     .el-image {
         margin: 0 10px;
+    }
+
+    .el-divider--horizontal {
+        margin: 0;
     }
 
 </style>
