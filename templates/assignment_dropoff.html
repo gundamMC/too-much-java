@@ -16,13 +16,18 @@
     {%  if name != None %}
     <b>File "{{ name }}" uploaded.</b>
 
+    <h3>Created assignments:</h3>
+    <ul>
         {% for a in created_assignments %}
-            {{a}}
+        <li>{{ a }}</li>
         {% endfor %}
+    </ul>
 
     {% endif %}
 
-    {{ error }}
+    {%  if error != None %}
+        {{ error }}
+    {% endif %}
 
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}

@@ -16,11 +16,12 @@ def dropoff(request):
         return render(request, '../templates/assignment_dropoff.html')
     else:
         f = request.FILES['file']
+        file_name = f.name
         # takes a zip file with each assignment in its subfolders
         with zipfile.ZipFile(f) as unzipped:
 
             # extract zip
-            zip_dir = os.path.join(MEDIA_ROOT, 'dropoff', f.name)
+            zip_dir = os.path.join(MEDIA_ROOT, 'dropoff', file_name)
 
             if os.path.exists(zip_dir) and len(os.listdir(zip_dir)) > 0:
                 # clear and override files if there are already ones
@@ -129,7 +130,7 @@ def dropoff(request):
                 due_date=due_date,
                 points=points,
                 attempts=attempts,
-                instructions=''.join(info_lines[7:]),
+                instructions='\n'.join(info_lines[7:]),
                 code_template=code_template,
                 tester_path=os.path.join(path, 'tester.java')
             )
@@ -137,6 +138,10 @@ def dropoff(request):
             assignment.save()
 
             created_assignments.append(assignment.name)
+            print(created_assignments)
 
+        print('final ===============')
+        print(file_name)
+        print(created_assignments)
         return render(request, '../templates/assignment_dropoff.html',
-                      {'name': f.name, 'created_assignments': created_assignments})
+                      {'name': file_name, 'created_assignments': created_assignments})
