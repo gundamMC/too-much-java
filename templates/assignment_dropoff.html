@@ -14,8 +14,15 @@
     <h1>Upload assignment files here</h1>
 
     {%  if name != None %}
-        File "{{ name }}" uploaded.
+    <b>File "{{ name }}" uploaded.</b>
+
+        {% for a in created_assignments %}
+            {{a}}
+        {% endfor %}
+
     {% endif %}
+
+    {{ error }}
 
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
