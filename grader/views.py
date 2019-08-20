@@ -1,15 +1,17 @@
-from datetime import datetime
-import zipfile
+import os
 import shutil
+import zipfile
+from datetime import datetime
 
+from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render
-from too_much_java.settings.base import MEDIA_ROOT
-from grader.models import CodeFileAssignment, Unit
 from django.utils.timezone import make_aware
 
-import os
+from grader.models import CodeFileAssignment, Unit
+from too_much_java.settings.base import MEDIA_ROOT
 
 
+@staff_member_required
 def dropoff(request):
     if 'file' not in request.FILES:
         # no file uploaded, show default page
