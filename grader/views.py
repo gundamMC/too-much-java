@@ -20,25 +20,35 @@ def dropoff(request):
         f = request.FILES['file']
         file_name = f.name
         # takes a zip file with each assignment in its subfolders
-        with zipfile.ZipFile(f) as unzipped:
+        try:
+            with zipfile.ZipFile(f) as unzipped:
 
-            # extract zip
-            zip_dir = os.path.join(MEDIA_ROOT, 'dropoff', file_name)
+                # extract zip
+                zip_dir = os.path.join(MEDIA_ROOT, 'dropoff', file_name)
 
-            if os.path.exists(zip_dir) and len(os.listdir(zip_dir)) > 0:
-                # clear and override files if there are already ones
-                shutil.rmtree(zip_dir)
+                if os.path.exists(zip_dir) and len(os.listdir(zip_dir)) > 0:
+                    # clear and override files if there are already ones
+                    shutil.rmtree(zip_dir)
 
-            unzipped.extractall(zip_dir)
+                unzipped.extractall(zip_dir)
+        except zipfile.BadZipFile:
+            # unexpcted exception
+            return render(request, '../templates/assignment_dropoff.html',
+                          {'error': 'file {0} is not a valid zip file'.format(file_name)})
 
         created_assignments = []
 
-        for item in os.listdir(zip_dir):
+        assignment_dirs = os.listdir(zip_dir)
+        # filter to only directories
+        assignment_dirs = [x for x in assignment_dirs if os.path.isdir(x)]
+
+        if len(assignment_dirs) < 1:
+            return render(request, '../templates/assignment_dropoff.html',
+                          {'error': 'No valid assignment folder found'})
+
+        for item in assignment_dirs:
             # path of sub directory (i.e. root of assignment)
             path = os.path.join(zip_dir, item)
-
-            if not os.path.isdir(path):
-                print(path, 'is not a directory, skipping it')
 
             subitems = os.listdir(path)
 
