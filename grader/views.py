@@ -19,6 +19,9 @@ def dropoff(request):
     else:
         f = request.FILES['file']
         file_name = f.name
+
+        print('Attempting to drop off file', file_name)
+
         # takes a zip file with each assignment in its subfolders
         try:
             with zipfile.ZipFile(f) as unzipped:
@@ -39,8 +42,9 @@ def dropoff(request):
         created_assignments = []
 
         assignment_dirs = os.listdir(zip_dir)
+
         # filter to only directories
-        assignment_dirs = [x for x in assignment_dirs if os.path.isdir(x)]
+        assignment_dirs = [x for x in assignment_dirs if os.path.isdir(os.path.join(zip_dir, x))]
 
         if len(assignment_dirs) < 1:
             return render(request, '../templates/assignment_dropoff.html',
@@ -118,6 +122,12 @@ def dropoff(request):
                 return render(request, '../templates/assignment_dropoff.html',
                               {'error': 'unit id / point / attempts is not integer in {0}'.format(path)})
 
+            try:
+                Unit.objects.get(pk=unit_id)
+            except Unit.DoesNotExist:
+                return render(request, '../templates/assignment_dropoff.html',
+                              {'error': 'No unit with id {0}'.format(unit_id)})
+
             test = dict(
                 name=info_lines[0],
                 description=info_lines[1],
@@ -150,9 +160,7 @@ def dropoff(request):
             assignment.save()
 
             created_assignments.append(assignment.name)
-            print(created_assignments)
 
-        print('final ===============')
         print(file_name)
         print(created_assignments)
         return render(request, '../templates/assignment_dropoff.html',
