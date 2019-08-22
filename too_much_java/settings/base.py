@@ -133,9 +133,24 @@ JWT_AUTH = {
     'JWT_REFRESH_EXPIRATION_DELTA': timezone.timedelta(days=7),
 }
 
+
 # Grader
 # Paths for the java compiler to use
 GRADE_TMP_PATH = os.path.join(BASE_DIR, 'grader_tmp')
-JUNIT_PATH = os.path.join(BASE_DIR, 'grader_resources', 'junit-platform-console-standalone-1.5.0.jar')
-JSON_PATH = os.path.join(BASE_DIR, 'grader_resources', 'json-20180813.jar')
-GRADER_CONTROLLER_PATH = os.path.join(BASE_DIR, 'grader_resources', 'testController.java')
+GRADE_RESOURCE_PATH = os.path.join(BASE_DIR, 'grader_resources')
+
+items = os.listdir(GRADE_RESOURCE_PATH)
+
+JUNIT_PATH = None
+JSON_PATH = None
+
+for item in items:
+    if item.startswith('junit-platform-console-standalone-') and item.endswith('.jar'):
+        JUNIT_PATH = os.path.join(GRADE_RESOURCE_PATH, item)
+    elif item.startswith('json-') and item.endswith('.jar'):
+        JSON_PATH = os.path.join(GRADE_RESOURCE_PATH, item)
+
+    if JUNIT_PATH is not None and JSON_PATH is not None:
+        break
+
+GRADER_CONTROLLER_PATH = os.path.join(GRADE_RESOURCE_PATH, 'testController.java')
