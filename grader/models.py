@@ -92,28 +92,45 @@ class Submission(models.Model):
         assert hasattr(self.assignment, 'codefileassignment')
 
         if self.points == 0:  # don't re-grade submissions
+            # start grading
+
+            SEPARATOR_SYMBOL = ':' if os.name == 'posix' else ';'
+            # posix = *nix (uses : for java separator), nt = windows (uses ;)
+
             files = self.files.all()
 
             tmp_build_path = os.path.join(settings.GRADE_TMP_PATH, str(self.id))
+            if not os.path.exists(tmp_build_path):
+                os.mkdir(tmp_build_path)
+
             # builds at ./grade_tmp/[submission_id]
             # should be unique enough since submission id is unique
             tester_path = self.assignment.codefileassignment.tester_path.path
             file_paths = [fileField.file.path for fileField in files]
             file_paths.append(tester_path)  # add junit tester to the list of files to be compiled
-            file_paths = ' '.join(file_paths)  # paths separated by spaces
+            # file_paths = ' '.join(file_paths)  # paths separated by spaces
             print(file_paths)
             junit_path = settings.JUNIT_PATH
             json_path = settings.JSON_PATH
 
             controller = settings.GRADER_CONTROLLER_PATH
 
+            print('starting to compile submission', self.pk)
             # build
-            build_cmd = r'javac -d {0} -cp {1} {2}'.format(tmp_build_path, junit_path, file_paths)
+            build_cmd = ['javac', '-d', tmp_build_path, '-cp', junit_path]
+            build_cmd.extend(file_paths)
+            print(build_cmd)
             # build file_paths at tmp_build_path, with a reference to junit in class path
             p = subprocess.Popen(build_cmd,
                                  stdout=subprocess.PIPE,
                                  stderr=subprocess.PIPE)
             output, errors = p.communicate()
+
+            print('compile outputs:')
+            print(output)
+
+            print('compile errors:')
+            print(errors)
 
             # track for compilation error
             if errors:
@@ -129,7 +146,12 @@ class Submission(models.Model):
                 return self.points
 
             # build controller
-            build_controller_cmd = r'javac -d {0} -cp {1};{2};{3} {4}'.format(tmp_build_path, tmp_build_path, junit_path, json_path, controller)
+            build_controller_cmd = ['javac',
+                                    '-d', tmp_build_path,
+                                    '-cp', SEPARATOR_SYMBOL.join([tmp_build_path, junit_path, json_path]),
+                                    controller]
+            print('building controller')
+            print(build_controller_cmd)
             # build controller at tmp_build_path, with class paths of the already
             # compiled file_paths files (located at the same tmp_build_path), junit, and json
 
@@ -138,8 +160,17 @@ class Submission(models.Model):
                                  stderr=subprocess.PIPE)
             output, errors = p.communicate()
 
+            print('compile outputs:')
+            print(output)
+
+            print('compile errors:')
+            print(errors)
+
             # now run the controller to get output from junit test
-            cmd = r'java -cp {0};{1};{2} testController'.format(tmp_build_path, junit_path, json_path)
+            cmd = ['java',
+                   '-cp', SEPARATOR_SYMBOL.join([tmp_build_path, junit_path, json_path]),
+                   'testController']
+            print('running assignment code')
 
             p = subprocess.Popen(cmd,
                                  stdout=subprocess.PIPE)
