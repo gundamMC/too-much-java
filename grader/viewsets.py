@@ -36,7 +36,9 @@ class SubmissionViewSet(viewsets.ModelViewSet):
         return self.request.user.student.submissions.all()
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        data = request.data
+        data['student'] = request.user.student.pk
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         submission = serializer.save()
         submission.total_points = submission.assignment.points

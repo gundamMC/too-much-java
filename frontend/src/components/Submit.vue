@@ -47,7 +47,7 @@
 
                 // create submission first
                 this.$api
-                    .post(`submission/`, {'assignment': this.assignment.id, 'student': this.student_id})
+                    .post(`submission/`, {'assignment': this.assignment.id})
                     .then(response => {
 
                         this.submission = response.data;
@@ -67,6 +67,9 @@
             },
 
             onSuccess() {
+
+                // clear files to prevent student from clicking twice
+                this.$refs.upload.clearFiles();
 
                 this.$api
                     .get('submission/' + this.sub_id + '/grade/')
