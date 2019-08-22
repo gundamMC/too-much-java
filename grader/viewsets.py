@@ -50,11 +50,11 @@ class SubmissionViewSet(viewsets.ModelViewSet):
 
     @action(methods=['get'], detail=True)
     def grade(self, request, pk=None):
-        print(pk)
         submission = get_object_or_404(Submission, pk=pk)
         submission.grade()
         submission.save()
-        return Response(SubmissionSerializer(submission.assignment.submissions, many=True).data)
+        return Response(SubmissionSerializer(
+            submission.assignment.submissions.filter(student=request.user.student.id), many=True).data)
 
     # @action(methods=['get'], detail=True)
     # def files(self, request, pk=None):
@@ -72,7 +72,8 @@ class AssignmentViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=True)
     def submissions(self, request, pk=None):
         assignment = get_object_or_404(Assignment, pk=pk)
-        return Response(SubmissionSerializer(assignment.submissions.filter(student=request.user.student), many=True).data)
+        results = assignment.submissions.filter(student__student_id=request.user.student.student_id)
+        return Response(SubmissionSerializer(results, many=True).data)
 
 
 #
